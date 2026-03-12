@@ -1,3 +1,5 @@
+cara buat akun
+
 \App\Models\User::create([
     'name' => 'admin',
     'email' => 'admin@gmail.com',
