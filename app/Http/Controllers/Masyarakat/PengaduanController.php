@@ -27,8 +27,8 @@ class PengaduanController extends Controller
     public function create()
     {
         $kategoris  = \App\Models\Kategori::aktif()->orderBy('urutan')->get();
-        $wilayas    = \App\Models\Wilaya::orderBy('nama')->get(); // semua wilayah untuk dropdown
-        $userWilaya = auth()->user()->load('wilaya')->wilaya;     // default sesuai akun user
+        $wilayas    = \App\Models\Wilaya::orderBy('nama')->get();
+        $userWilaya = auth()->user()->load('wilaya')->wilaya;
         return view('masyarakat.pengaduan.create', compact('kategoris', 'wilayas', 'userWilaya'));
     }
 
@@ -43,10 +43,8 @@ class PengaduanController extends Controller
             'lampiran.*'  => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
-        // Wilaya diambil dari pilihan user di form
         $wilayaId = $request->wilayah_id;
 
-        // Upload lampiran
         $lampiranPaths = [];
         if ($request->hasFile('lampiran')) {
             foreach ($request->file('lampiran') as $file) {
@@ -77,6 +75,7 @@ class PengaduanController extends Controller
         return redirect()->route('masyarakat.pengaduan.show', $pengaduan->slug)
             ->with('success', "Laporan berhasil dikirim! Kode: {$pengaduan->kode_laporan}");
     }
+
     public function show(Pengaduan $pengaduan)
     {
         abort_if(
@@ -85,7 +84,13 @@ class PengaduanController extends Controller
         );
 
         $pengaduan->increment('views');
-        $pengaduan->load(['kategori', 'wilaya', 'tanggapans.user', 'histories.user', 'petugas']);
+
+        // ← Tambah penilaians.user untuk fitur rating
+        $pengaduan->load([
+            'kategori', 'wilaya', 'tanggapans.user',
+            'histories.user', 'petugas',
+            'penilaians.user',
+        ]);
 
         return view('masyarakat.pengaduan.show', compact('pengaduan'));
     }

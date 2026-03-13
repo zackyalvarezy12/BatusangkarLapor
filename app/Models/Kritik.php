@@ -6,12 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kritik extends Model
 {
-    protected $table = 'kritiks';
+    protected $fillable = [
+        'user_id', 'nama', 'email', 'jenis', 'isi',
+        'balasan', 'dibalas_oleh', 'dibalas_at',
+    ];
 
-    protected $fillable = ['user_id', 'nama', 'email', 'jenis', 'isi', 'balasan', 'dibalas_oleh', 'dibalas_at'];
+    protected $casts = [
+        'dibalas_at' => 'datetime',
+    ];
 
-    protected $casts = ['dibalas_at' => 'datetime'];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    public function user()    { return $this->belongsTo(User::class); }
-    public function petugas() { return $this->belongsTo(User::class, 'dibalas_oleh'); }
+    public function pembalas()
+    {
+        return $this->belongsTo(User::class, 'dibalas_oleh');
+    }
+
+    public function sudahDibalas(): bool
+    {
+        return !is_null($this->balasan);
+    }
 }

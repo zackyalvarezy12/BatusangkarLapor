@@ -1,4 +1,6 @@
-cara buat akun
+#cara buat akun
+
+#rolenya ada (admin,petugas,masyarakat)
 
 \App\Models\User::create([
     'name' => 'admin',

@@ -28,24 +28,20 @@ class Pengaduan extends Model
         'lampiran'  => 'encrypted',
     ];
 
-    // ── Boot: auto-generate kode & token ─────────────────
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            // Kode Laporan
             if (empty($model->kode_laporan)) {
                 $model->kode_laporan = static::generateKodeLaporan();
             }
-            // Tracking Token
             if (empty($model->tracking_token)) {
                 $model->tracking_token = static::generateTrackingToken();
             }
         });
     }
 
-    // ── Slug ──────────────────────────────────────────────
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -60,7 +56,6 @@ class Pengaduan extends Model
         return 'slug';
     }
 
-    // ── Hashids ───────────────────────────────────────────
     public function getHashidAttribute(): string
     {
         return Hashids::encode($this->id);
@@ -73,12 +68,9 @@ class Pengaduan extends Model
         return static::find($ids[0]);
     }
 
-    // ── Kode Laporan ──────────────────────────────────────
     public static function generateKodeLaporan(): string
     {
-        // Tanpa I, O, 0, 1 supaya tidak membingungkan
         $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
         do {
             $acak = '';
             for ($i = 0; $i < 10; $i++) {
@@ -86,11 +78,9 @@ class Pengaduan extends Model
             }
             $kode = 'BL-' . $acak;
         } while (static::withTrashed()->where('kode_laporan', $kode)->exists());
-
         return $kode;
     }
 
-    // ── Tracking Token ────────────────────────────────────
     public static function generateTrackingToken(): string
     {
         do {
@@ -98,11 +88,9 @@ class Pengaduan extends Model
                    . Str::upper(Str::random(4)) . '-'
                    . Str::upper(Str::random(4));
         } while (static::where('tracking_token', $token)->exists());
-
         return $token;
     }
 
-    // ── Status Badge ──────────────────────────────────────
     public function getStatusBadgeAttribute(): array
     {
         return match ($this->status) {
@@ -114,7 +102,6 @@ class Pengaduan extends Model
         };
     }
 
-    // ── Scopes ────────────────────────────────────────────
     public function scopePublik($q)   { return $q->where('is_publik', true); }
     public function scopeMenunggu($q) { return $q->where('status', 'menunggu'); }
     public function scopeProses($q)   { return $q->where('status', 'proses'); }
@@ -129,5 +116,6 @@ class Pengaduan extends Model
     public function tanggapans() { return $this->hasMany(Tanggapan::class); }
     public function histories()  { return $this->hasMany(PengaduanHistory::class)->latest(); }
     public function penilaian()  { return $this->hasOne(Penilaian::class); }
+    public function penilaians() { return $this->hasMany(Penilaian::class); }  // ← BARU
     public function pesans()     { return $this->hasMany(PesanLaporan::class); }
 }

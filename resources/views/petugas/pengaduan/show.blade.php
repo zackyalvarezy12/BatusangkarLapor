@@ -264,6 +264,9 @@
                 @endforeach
             </div>
         </div>
+
+        {{-- Penilaian --}}
+        @include('components.penilaian-section')
     </div>
 </div>
 </div>

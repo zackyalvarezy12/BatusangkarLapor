@@ -9,22 +9,16 @@ use App\Models\PesanLaporan;
 use App\Models\PesanLampiran;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PengaduanController extends Controller
 {
-    // Hanya laporan di wilayah petugas ini
     private function queryWilaya()
     {
         $user = auth()->user();
         $query = Pengaduan::with(['user', 'kategori', 'wilaya']);
-
-        // Jika petugas punya wilaya_id, filter by wilayah
-        // Jika null (belum ditetapkan), tampilkan semua agar tidak kosong
         if (!is_null($user->wilaya_id)) {
             $query->where('wilaya_id', $user->wilaya_id);
         }
-
         return $query;
     }
 
@@ -41,13 +35,19 @@ class PengaduanController extends Controller
     public function show(Pengaduan $pengaduan)
     {
         $user = auth()->user();
-        // Izinkan akses jika wilayah cocok, ATAU petugas belum ada wilayah, ATAU admin
         if (!is_null($user->wilaya_id)
             && $pengaduan->wilaya_id !== $user->wilaya_id
             && $user->role !== 'admin') {
             abort(403, 'Laporan ini bukan wilayah Anda.');
         }
-        $pengaduan->load(['user', 'kategori', 'wilaya', 'petugas', 'tanggapans.user', 'histories.user']);
+
+        // ← Tambah penilaians.user untuk tampilkan rating
+        $pengaduan->load([
+            'user', 'kategori', 'wilaya', 'petugas',
+            'tanggapans.user', 'histories.user',
+            'penilaians.user',
+        ]);
+
         return view('petugas.pengaduan.show', compact('pengaduan'));
     }
 
@@ -74,7 +74,6 @@ class PengaduanController extends Controller
             'keterangan'   => $request->keterangan ?? 'Status diperbarui oleh petugas.',
         ]);
 
-        // Notifikasi ke pelapor
         Notifikasi::create([
             'user_id' => $pengaduan->user_id,
             'judul'   => 'Status laporan diperbarui',
@@ -101,7 +100,6 @@ class PengaduanController extends Controller
     public function chat(Pengaduan $pengaduan)
     {
         $user = auth()->user();
-        // Boleh akses jika: wilaya_id null (semua wilayah) ATAU wilayah cocok
         if (!is_null($user->wilaya_id) && $pengaduan->wilaya_id !== $user->wilaya_id) {
             abort(403);
         }
@@ -123,7 +121,7 @@ class PengaduanController extends Controller
         $request->validate([
             'pesan'      => 'nullable|string|max:2000',
             'lampirans'  => 'nullable|array',
-            'lampirans.*'=> 'file|max:10240', // 10MB per file
+            'lampirans.*'=> 'file|max:10240',
         ]);
 
         if (!$request->filled('pesan') && !$request->hasFile('lampirans')) {
@@ -150,7 +148,6 @@ class PengaduanController extends Controller
             }
         }
 
-        // Notifikasi ke pelapor
         Notifikasi::create([
             'user_id' => $pengaduan->user_id,
             'judul'   => 'Pesan baru dari petugas',
@@ -162,7 +159,6 @@ class PengaduanController extends Controller
         if ($request->ajax()) {
             return response()->json(['success' => true, 'pesan_id' => $pesan->id]);
         }
-
         return back()->with('success', 'Pesan terkirim.');
     }
 
@@ -176,15 +172,15 @@ class PengaduanController extends Controller
             ->get()
             ->map(function ($p) {
                 return [
-                    'id'          => $p->id,
-                    'pesan'       => $p->pesan,
-                    'user'        => $p->user->name,
-                    'user_id'     => $p->user_id,
-                    'role'        => $p->user->role,
-                    'avatar'      => $p->user->avatar_url,
-                    'waktu'       => $p->created_at->format('H:i'),
-                    'tanggal'     => $p->created_at->format('d M Y'),
-                    'lampirans'   => $p->lampirans->map(fn($l) => [
+                    'id'        => $p->id,
+                    'pesan'     => $p->pesan,
+                    'user'      => $p->user->name,
+                    'user_id'   => $p->user_id,
+                    'role'      => $p->user->role,
+                    'avatar'    => $p->user->avatar_url,
+                    'waktu'     => $p->created_at->format('H:i'),
+                    'tanggal'   => $p->created_at->format('d M Y'),
+                    'lampirans' => $p->lampirans->map(fn($l) => [
                         'id'        => $l->id,
                         'nama_file' => $l->nama_file,
                         'url'       => $l->url,

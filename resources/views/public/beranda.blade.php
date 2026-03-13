@@ -296,6 +296,7 @@
         <div class="hidden md:flex items-center gap-1">
             <a href="{{ route('lacak') }}" class="text-sm text-gray-500 hover:text-[#1a3a6b] font-semibold px-4 py-2 rounded-lg hover:bg-[#1a3a6b]/5 transition">Cek Laporan</a>
             <a href="{{ route('faq') }}" class="text-sm text-gray-500 hover:text-[#1a3a6b] font-semibold px-4 py-2 rounded-lg hover:bg-[#1a3a6b]/5 transition">FAQ</a>
+            <a href="{{ route('kritik.create') }}" class="text-sm text-gray-500 hover:text-[#1a3a6b] font-semibold px-4 py-2 rounded-lg hover:bg-[#1a3a6b]/5 transition">Kritik & Saran</a>
         </div>
 
         {{-- Auth desktop --}}
@@ -343,6 +344,10 @@
         <a href="{{ route('faq') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-[#1a3a6b] transition">
             <svg class="w-4 h-4 text-[#1a3a6b]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             FAQ
+        </a>
+        <a href="{{ route('kritik.create') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-[#1a3a6b] transition">
+            <svg class="w-4 h-4 text-[#1a3a6b]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            Kritik & Saran
         </a>
         <div class="border-t border-gray-100 my-1 pt-2">
             @auth
@@ -608,7 +613,143 @@
     </div>
 </div>
 
+{{-- ═══ PENGUMUMAN ═══ --}}
+@php $pengumumans = \App\Models\Pengumuman::aktif()->latest('diterbitkan_at')->take(4)->get(); @endphp
+@if($pengumumans->count() > 0)
+<section class="relative py-20 px-4 overflow-hidden" style="background: linear-gradient(160deg, #f0f6ff 0%, #fefefe 40%, #fffbf0 100%);">
+
+    {{-- Decorative background blobs --}}
+    <div class="absolute top-0 left-0 w-96 h-96 rounded-full opacity-[0.06] pointer-events-none"
+         style="background: radial-gradient(circle, #1a3a6b, transparent); transform: translate(-30%, -30%);"></div>
+    <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-[0.05] pointer-events-none"
+         style="background: radial-gradient(circle, #f59e0b, transparent); transform: translate(30%, 30%);"></div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div class="reveal">
+                <div class="inline-flex items-center gap-2.5 mb-4 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest"
+                     style="background: linear-gradient(135deg, rgba(245,158,11,.12), rgba(251,146,60,.08)); border: 1px solid rgba(245,158,11,.2); color: #b45309;">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    Pengumuman Resmi
+                </div>
+                <h2 class="font-serif text-3xl lg:text-4xl text-gray-800 leading-tight">
+                    Informasi <em class="grad-text">Terkini</em>
+                </h2>
+                <p class="text-gray-400 text-sm mt-2 max-w-sm">Pengumuman dan informasi resmi dari Pemerintah Kabupaten Tanah Datar.</p>
+            </div>
+            <div class="reveal reveal-2 flex-shrink-0">
+                <span class="inline-flex items-center gap-2 text-xs text-[#1a3a6b] font-bold bg-[#1a3a6b]/6 px-4 py-2.5 rounded-xl">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    {{ $pengumumans->count() }} Pengumuman Aktif
+                </span>
+            </div>
+        </div>
+
+        {{-- Cards Grid --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            @foreach($pengumumans as $i => $p)
+            @php
+                $palettes = [
+                    ['from' => '#1a3a6b', 'to' => '#2352a0', 'badge_bg' => 'rgba(26,58,107,.08)', 'badge_text' => '#1a3a6b', 'border' => 'rgba(26,58,107,.1)', 'icon_bg' => 'linear-gradient(135deg,#1a3a6b,#2352a0)'],
+                    ['from' => '#b45309', 'to' => '#d97706', 'badge_bg' => 'rgba(245,158,11,.08)', 'badge_text' => '#b45309', 'border' => 'rgba(245,158,11,.15)', 'icon_bg' => 'linear-gradient(135deg,#b45309,#d97706)'],
+                    ['from' => '#065f46', 'to' => '#059669', 'badge_bg' => 'rgba(5,150,105,.08)', 'badge_text' => '#065f46', 'border' => 'rgba(5,150,105,.12)', 'icon_bg' => 'linear-gradient(135deg,#065f46,#059669)'],
+                    ['from' => '#6d28d9', 'to' => '#7c3aed', 'badge_bg' => 'rgba(109,40,217,.08)', 'badge_text' => '#5b21b6', 'border' => 'rgba(109,40,217,.12)', 'icon_bg' => 'linear-gradient(135deg,#6d28d9,#7c3aed)'],
+                ];
+                $pal = $palettes[$i % 4];
+            @endphp
+
+            <div class="reveal reveal-{{ ($i % 3) + 2 }} group relative bg-white rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl"
+                 style="border: 1px solid {{ $pal['border'] }}; box-shadow: 0 2px 12px rgba(0,0,0,.05);">
+
+                {{-- Top accent bar --}}
+                <div class="h-1 w-full" style="background: linear-gradient(90deg, {{ $pal['from'] }}, {{ $pal['to'] }});"></div>
+
+                <div class="p-6">
+                    <div class="flex items-start gap-4">
+
+                        {{-- Icon --}}
+                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-110"
+                             style="background: {{ $pal['icon_bg'] }};">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                      d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                            </svg>
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            {{-- Badge + date row --}}
+                            <div class="flex items-center justify-between gap-2 mb-2.5 flex-wrap">
+                                <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg"
+                                      style="background: {{ $pal['badge_bg'] }}; color: {{ $pal['badge_text'] }};">
+                                    @if($i === 0)
+                                    <span class="relative flex h-1.5 w-1.5">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background:{{ $pal['from'] }};"></span>
+                                        <span class="relative inline-flex rounded-full h-1.5 w-1.5" style="background:{{ $pal['from'] }};"></span>
+                                    </span>
+                                    Terbaru
+                                    @else
+                                    Pengumuman
+                                    @endif
+                                </span>
+                                <span class="text-[11px] text-gray-400 font-medium flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    {{ $p->diterbitkan_at->format('d M Y') }}
+                                </span>
+                            </div>
+
+                            {{-- Title --}}
+                            <h3 class="font-bold text-gray-800 text-[15px] leading-snug mb-2 line-clamp-2 transition-colors group-hover:opacity-80">
+                                {{ $p->judul }}
+                            </h3>
+
+                            {{-- Content --}}
+                            <p class="text-gray-500 text-[13px] leading-relaxed line-clamp-2">
+                                {{ $p->konten }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="mt-4 pt-4 flex items-center justify-between"
+                         style="border-top: 1px dashed {{ $pal['border'] }};">
+                        <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9"/>
+                            </svg>
+                            Pemkab Tanah Datar
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Bottom line --}}
+        <div class="mt-12 flex items-center gap-4 reveal">
+            <div class="flex-1 h-px" style="background: linear-gradient(90deg, transparent, rgba(26,58,107,.12), transparent);"></div>
+            <span class="text-[11px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>
+                Diperbarui secara berkala
+            </span>
+            <div class="flex-1 h-px" style="background: linear-gradient(90deg, transparent, rgba(26,58,107,.12), transparent);"></div>
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- ═══ CARA KERJA ═══ --}}
+
 <section class="py-28 px-4 bg-[#f8faff] overflow-hidden">
     <div class="max-w-6xl mx-auto">
         <div class="text-center mb-16 reveal">
@@ -689,6 +830,94 @@
         </div>
     </div>
 </section>
+
+
+{{-- ═══ TESTIMONIAL / PENILAIAN ═══ --}}
+@php
+    $ulasanPublik = \App\Models\Penilaian::with(['user','pengaduan'])
+        ->whereNotNull('komentar')
+        ->where('komentar', '!=', '')
+        ->whereHas('pengaduan', fn($q) => $q->where('is_publik', true))
+        ->latest()
+        ->take(6)
+        ->get();
+    $avgRating = \App\Models\Penilaian::avg('nilai');
+    $totalPenilaian = \App\Models\Penilaian::count();
+@endphp
+
+@if($ulasanPublik->count() > 0)
+<section class="py-24 px-4 overflow-hidden" style="background: linear-gradient(160deg, #fefefe 0%, #f8faff 50%, #fffbf0 100%);">
+    <div class="max-w-6xl mx-auto">
+
+        {{-- Header --}}
+        <div class="text-center mb-14 reveal">
+            <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-100 text-amber-700 text-xs font-black px-4 py-2 rounded-full mb-5 uppercase tracking-widest">
+                <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                Ulasan Warga
+            </span>
+            <h2 class="font-serif text-4xl lg:text-5xl text-gray-800 mb-3">
+                Kata Warga Tanah Datar
+            </h2>
+            <p class="text-gray-400 text-sm max-w-sm mx-auto">Penilaian nyata dari masyarakat yang telah menggunakan layanan BatusangkarLapor.</p>
+
+            {{-- Overall rating --}}
+            @if($avgRating && $totalPenilaian > 0)
+            <div class="inline-flex items-center gap-3 mt-5 bg-white border border-amber-100 rounded-2xl px-5 py-3 shadow-sm">
+                <div class="text-3xl font-black text-amber-500">{{ number_format($avgRating, 1) }}</div>
+                <div>
+                    <div class="flex gap-0.5 mb-1">
+                        @for($i = 1; $i <= 5; $i++)
+                        <svg class="w-4 h-4 {{ $i <= round($avgRating) ? 'text-amber-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        @endfor
+                    </div>
+                    <div class="text-xs text-gray-400">dari {{ $totalPenilaian }} penilaian</div>
+                </div>
+            </div>
+            @endif
+        </div>
+
+        {{-- Grid ulasan --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach($ulasanPublik as $i => $ul)
+            <div class="reveal reveal-{{ ($i % 3) + 2 }} bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+
+                {{-- Bintang --}}
+                <div class="flex gap-0.5 mb-4">
+                    @for($s = 1; $s <= 5; $s++)
+                    <svg class="w-4 h-4 {{ $s <= $ul->nilai ? 'text-amber-400' : 'text-gray-100' }}" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    @endfor
+                </div>
+
+                {{-- Komentar --}}
+                <p class="text-gray-600 text-sm leading-relaxed mb-5 italic">"{{ Str::limit($ul->komentar, 120) }}"</p>
+
+                {{-- Tentang laporan --}}
+                <div class="flex items-center gap-3 pt-4 border-t border-gray-50">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a3a6b] to-[#2352a0] flex items-center justify-center flex-shrink-0">
+                        <span class="text-xs font-black text-white">{{ strtoupper(substr($ul->user?->name ?? 'A', 0, 1)) }}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-gray-700 truncate">
+                            {{ $ul->pengaduan?->is_anonim ? 'Warga Anonim' : ($ul->user?->name ?? 'Warga') }}
+                        </div>
+                        <div class="text-[10px] text-gray-400 truncate">
+                            {{ Str::limit($ul->pengaduan?->judul ?? '-', 35) }}
+                        </div>
+                    </div>
+                    <span class="ml-auto text-[10px] text-gray-300 flex-shrink-0">{{ $ul->created_at->format('d M Y') }}</span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
 {{-- ═══ CTA BANNER ═══ --}}
 <section class="cta-section py-28 px-4 relative z-0 overflow-hidden">
@@ -773,7 +1002,7 @@
             <div>
                 <div class="text-white font-bold mb-4 text-sm uppercase tracking-wide">Tautan Cepat</div>
                 <div class="space-y-2.5 text-sm">
-                    @foreach([['Beranda', 'beranda'], ['Cek Laporan', 'lacak'], ['FAQ', 'faq'], ['Daftar Akun', 'register']] as $l)
+                    @foreach([['Beranda', 'beranda'], ['Cek Laporan', 'lacak'], ['FAQ', 'faq'], ['Kritik & Saran', 'kritik.create'], ['Daftar Akun', 'register']] as $l)
                     <div>
                         <a href="{{ route($l[1]) }}" class="hover:text-white transition-colors flex items-center gap-2 group">
                             <svg class="w-3 h-3 text-amber-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" fill="currentColor" viewBox="0 0 20 20">

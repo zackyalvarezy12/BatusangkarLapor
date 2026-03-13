@@ -9,8 +9,11 @@ use App\Http\Controllers\Admin\PengaduanController as AdminPengaduan;
 use App\Http\Controllers\Admin\UserController as AdminUser;
 use App\Http\Controllers\Admin\WilayaController as AdminWilaya;
 use App\Http\Controllers\Admin\FaqController as AdminFaq;
+use App\Http\Controllers\Admin\KritikController as AdminKritik;
+use App\Http\Controllers\KritikController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduan;
 use App\Http\Controllers\Masyarakat\PengaduanController as MasyarakatPengaduan;
+use App\Http\Controllers\Masyarakat\PenilaianController; // ← BARU
 
 // ═══════════════════════════════════════════════
 // PUBLIC ROUTES
@@ -19,6 +22,8 @@ use App\Http\Controllers\Masyarakat\PengaduanController as MasyarakatPengaduan;
 Route::get('/',            [PublicController::class, 'beranda'])->name('beranda');
 Route::get('/cek-laporan', [PublicController::class, 'lacak'])->name('lacak');
 Route::get('/faq',         [PublicController::class, 'faq'])->name('faq');
+Route::get('/kritik-saran',  [KritikController::class, 'create'])->name('kritik.create');
+Route::post('/kritik-saran', [KritikController::class, 'store'])->name('kritik.store');
 
 // ═══════════════════════════════════════════════
 // AUTH ROUTES (Guest Only)
@@ -67,6 +72,9 @@ Route::middleware(['auth', 'role:masyarakat'])
     Route::get('/{pengaduan}/chat',       [MasyarakatPengaduan::class, 'chat'])->name('pengaduan.chat');
     Route::post('/{pengaduan}/pesan',     [MasyarakatPengaduan::class, 'kirimPesan'])->name('pengaduan.pesan');
     Route::get('/{pengaduan}/pesan-baru', [MasyarakatPengaduan::class, 'pesanBaru'])->name('pengaduan.pesan.baru');
+
+    // ← BARU: Penilaian
+    Route::post('/{pengaduan}/penilaian', [PenilaianController::class, 'store'])->name('penilaian.store');
 });
 
 // ═══════════════════════════════════════════════
@@ -95,6 +103,9 @@ Route::middleware(['auth', 'role:petugas', 'must_change_password'])
     Route::put('/profil',          [\App\Http\Controllers\Petugas\ProfilController::class, 'update'])->name('profil.update');
     Route::get('/profil/password', [\App\Http\Controllers\Petugas\ProfilController::class, 'editPassword'])->name('password.edit');
     Route::put('/profil/password', [\App\Http\Controllers\Petugas\ProfilController::class, 'updatePassword'])->name('password.update');
+
+    Route::get('/export',         [\App\Http\Controllers\Petugas\LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('/export/cetak',  [\App\Http\Controllers\Petugas\LaporanController::class, 'export'])->name('laporan.export');
 });
 
 // ═══════════════════════════════════════════════
@@ -124,7 +135,7 @@ Route::middleware(['auth', 'role:admin'])
     Route::delete('/user/{user}',       [AdminUser::class, 'destroy'])->name('user.destroy');
     Route::patch('/user/{user}/toggle', [AdminUser::class, 'toggleActive'])->name('user.toggle');
 
-    // Laporan
+    // Semua Laporan
     Route::get('/laporan',                        [AdminPengaduan::class, 'index'])->name('pengaduan.index');
     Route::get('/laporan/{pengaduan}',            [AdminPengaduan::class, 'show'])->name('pengaduan.show');
     Route::patch('/laporan/{pengaduan}/status',   [AdminPengaduan::class, 'updateStatus'])->name('pengaduan.status');
@@ -154,4 +165,20 @@ Route::middleware(['auth', 'role:admin'])
     Route::put('/faq/{faq}',             [AdminFaq::class, 'update'])->name('faq.update');
     Route::patch('/faq/{faq}/toggle',    [AdminFaq::class, 'toggle'])->name('faq.toggle');
     Route::delete('/faq/{faq}',          [AdminFaq::class, 'destroy'])->name('faq.destroy');
+
+    // Pengumuman
+    Route::get('/pengumuman',                        [\App\Http\Controllers\Admin\PengumumanController::class, 'index'])->name('pengumuman.index');
+    Route::post('/pengumuman',                       [\App\Http\Controllers\Admin\PengumumanController::class, 'store'])->name('pengumuman.store');
+    Route::put('/pengumuman/{pengumuman}',           [\App\Http\Controllers\Admin\PengumumanController::class, 'update'])->name('pengumuman.update');
+    Route::patch('/pengumuman/{pengumuman}/toggle',  [\App\Http\Controllers\Admin\PengumumanController::class, 'toggle'])->name('pengumuman.toggle');
+    Route::delete('/pengumuman/{pengumuman}',        [\App\Http\Controllers\Admin\PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
+
+    // Kritik & Saran
+    Route::get('/kritik',                  [AdminKritik::class, 'index'])->name('kritik.index');
+    Route::patch('/kritik/{kritik}/balas', [AdminKritik::class, 'balas'])->name('kritik.balas');
+    Route::delete('/kritik/{kritik}',      [AdminKritik::class, 'destroy'])->name('kritik.destroy');
+
+    // Export Laporan
+    Route::get('/export',        [\App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('/export/cetak', [\App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
 });
