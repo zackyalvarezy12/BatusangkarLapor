@@ -11,9 +11,10 @@ use App\Http\Controllers\Admin\WilayaController as AdminWilaya;
 use App\Http\Controllers\Admin\FaqController as AdminFaq;
 use App\Http\Controllers\Admin\KritikController as AdminKritik;
 use App\Http\Controllers\KritikController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduan;
 use App\Http\Controllers\Masyarakat\PengaduanController as MasyarakatPengaduan;
-use App\Http\Controllers\Masyarakat\PenilaianController; // ← BARU
+use App\Http\Controllers\Masyarakat\PenilaianController;
 
 // ═══════════════════════════════════════════════
 // PUBLIC ROUTES
@@ -51,6 +52,14 @@ Route::middleware(['auth', 'must_change_password'])->group(function () {
 });
 
 // ═══════════════════════════════════════════════
+// NOTIFIKASI (semua user auth)
+// ═══════════════════════════════════════════════
+
+Route::middleware('auth')->group(function () {
+    Route::patch('/notif/{id}/baca', [NotifikasiController::class, 'baca'])->name('notif.baca');
+});
+
+// ═══════════════════════════════════════════════
 // MASYARAKAT ROUTES
 // ═══════════════════════════════════════════════
 
@@ -73,7 +82,6 @@ Route::middleware(['auth', 'role:masyarakat'])
     Route::post('/{pengaduan}/pesan',     [MasyarakatPengaduan::class, 'kirimPesan'])->name('pengaduan.pesan');
     Route::get('/{pengaduan}/pesan-baru', [MasyarakatPengaduan::class, 'pesanBaru'])->name('pengaduan.pesan.baru');
 
-    // ← BARU: Penilaian
     Route::post('/{pengaduan}/penilaian', [PenilaianController::class, 'store'])->name('penilaian.store');
 });
 
@@ -104,8 +112,11 @@ Route::middleware(['auth', 'role:petugas', 'must_change_password'])
     Route::get('/profil/password', [\App\Http\Controllers\Petugas\ProfilController::class, 'editPassword'])->name('password.edit');
     Route::put('/profil/password', [\App\Http\Controllers\Petugas\ProfilController::class, 'updatePassword'])->name('password.update');
 
-    Route::get('/export',         [\App\Http\Controllers\Petugas\LaporanController::class, 'index'])->name('laporan.index');
-    Route::post('/export/cetak',  [\App\Http\Controllers\Petugas\LaporanController::class, 'export'])->name('laporan.export');
+    Route::get('/export',        [\App\Http\Controllers\Petugas\LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('/export/cetak', [\App\Http\Controllers\Petugas\LaporanController::class, 'export'])->name('laporan.export');
+
+    // Notifikasi
+    Route::patch('/notif/read-all', [NotifikasiController::class, 'readAllPetugas'])->name('notif.readall');
 });
 
 // ═══════════════════════════════════════════════
@@ -181,4 +192,7 @@ Route::middleware(['auth', 'role:admin'])
     // Export Laporan
     Route::get('/export',        [\App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
     Route::post('/export/cetak', [\App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
+
+    // Notifikasi
+    Route::patch('/notif/read-all', [NotifikasiController::class, 'readAllAdmin'])->name('notif.readall');
 });

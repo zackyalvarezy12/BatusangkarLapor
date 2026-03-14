@@ -858,7 +858,7 @@
                 Ulasan Warga
             </span>
             <h2 class="font-serif text-4xl lg:text-5xl text-gray-800 mb-3">
-                Kata Warga Tanah Datar
+                Komentar Warga Tanah Datar
             </h2>
             <p class="text-gray-400 text-sm max-w-sm mx-auto">Penilaian nyata dari masyarakat yang telah menggunakan layanan BatusangkarLapor.</p>
 

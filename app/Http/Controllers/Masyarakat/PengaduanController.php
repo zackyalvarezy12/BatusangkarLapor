@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Masyarakat;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Kategori, Notifikasi, Pengaduan, PengaduanHistory, Wilaya};
+use App\Models\{Kategori, Notifikasi, Pengaduan, PengaduanHistory, User, Wilaya};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,8 +43,6 @@ class PengaduanController extends Controller
             'lampiran.*'  => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
-        $wilayaId = $request->wilayah_id;
-
         $lampiranPaths = [];
         if ($request->hasFile('lampiran')) {
             foreach ($request->file('lampiran') as $file) {
@@ -52,11 +50,11 @@ class PengaduanController extends Controller
             }
         }
 
-        $pengaduan = \App\Models\Pengaduan::create([
+        $pengaduan = Pengaduan::create([
             'judul'        => $request->judul,
             'user_id'      => auth()->id(),
             'kategori_id'  => $request->kategori_id,
-            'wilaya_id'    => $wilayaId,
+            'wilaya_id'    => $request->wilayah_id,
             'deskripsi'    => $request->deskripsi,
             'lampiran'     => !empty($lampiranPaths) ? json_encode($lampiranPaths) : null,
             'is_anonim'    => $request->boolean('is_anonim'),
@@ -64,13 +62,42 @@ class PengaduanController extends Controller
             'status'       => 'menunggu',
         ]);
 
-        \App\Models\PengaduanHistory::create([
+        PengaduanHistory::create([
             'pengaduan_id' => $pengaduan->id,
             'user_id'      => auth()->id(),
             'status_lama'  => null,
             'status_baru'  => 'menunggu',
             'keterangan'   => 'Laporan baru dibuat.',
         ]);
+
+        // ── Notifikasi ke semua Admin ──────────────────────────
+        $pelapor = auth()->user()->name;
+        $admins  = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notifikasi::create([
+                'user_id' => $admin->id,
+                'judul'   => 'Laporan Baru Masuk',
+                'pesan'   => "Laporan baru dari {$pelapor}: \"{$pengaduan->judul}\".",
+                'url'     => route('admin.pengaduan.show', $pengaduan->slug),
+                'tipe'    => 'info',
+            ]);
+        }
+
+        // ── Notifikasi ke Petugas wilayah ──────────────────────
+        $petugas = User::where('role', 'petugas')
+            ->where(function($q) use ($pengaduan) {
+                $q->where('wilaya_id', $pengaduan->wilaya_id)
+                  ->orWhereNull('wilaya_id'); // petugas semua wilayah
+            })->get();
+        foreach ($petugas as $p) {
+            Notifikasi::create([
+                'user_id' => $p->id,
+                'judul'   => 'Laporan Baru di Wilayah Anda',
+                'pesan'   => "Ada laporan baru: \"{$pengaduan->judul}\".",
+                'url'     => route('petugas.pengaduan.show', $pengaduan->slug),
+                'tipe'    => 'info',
+            ]);
+        }
 
         return redirect()->route('masyarakat.pengaduan.show', $pengaduan->slug)
             ->with('success', "Laporan berhasil dikirim! Kode: {$pengaduan->kode_laporan}");
@@ -84,8 +111,6 @@ class PengaduanController extends Controller
         );
 
         $pengaduan->increment('views');
-
-        // ← Tambah penilaians.user untuk fitur rating
         $pengaduan->load([
             'kategori', 'wilaya', 'tanggapans.user',
             'histories.user', 'petugas',
@@ -98,19 +123,14 @@ class PengaduanController extends Controller
     public function lacak(Request $request)
     {
         $pengaduan = null;
-
         if ($request->filled('token')) {
             $pengaduan = Pengaduan::where('tracking_token', $request->token)
-                ->with(['kategori', 'wilaya', 'histories'])
-                ->first();
+                ->with(['kategori', 'wilaya', 'histories'])->first();
         }
-
         if ($request->filled('kode')) {
             $pengaduan = Pengaduan::where('kode_laporan', strtoupper($request->kode))
-                ->with(['kategori', 'wilaya', 'histories'])
-                ->first();
+                ->with(['kategori', 'wilaya', 'histories'])->first();
         }
-
         return view('public.lacak', compact('pengaduan'));
     }
 
@@ -118,7 +138,6 @@ class PengaduanController extends Controller
     {
         abort_if($pengaduan->user_id !== Auth::id(), 403);
         abort_if($pengaduan->status !== 'menunggu', 403, 'Laporan yang sedang diproses tidak dapat dihapus.');
-
         $pengaduan->delete();
         return redirect()->route('masyarakat.pengaduan.index')
             ->with('success', 'Laporan berhasil dihapus.');
@@ -131,31 +150,26 @@ class PengaduanController extends Controller
         $pesans = \App\Models\PesanLaporan::with(['user', 'lampirans'])
             ->where('pengaduan_id', $pengaduan->id)
             ->oldest()->get();
-
         return view('masyarakat.pengaduan.chat', compact('pengaduan', 'pesans'));
     }
 
     public function kirimPesan(Request $request, Pengaduan $pengaduan)
     {
         if ($pengaduan->user_id !== auth()->id()) abort(403);
-
         $request->validate([
             'pesan'       => 'nullable|string|max:2000',
             'lampirans'   => 'nullable|array',
             'lampirans.*' => 'file|max:10240',
         ]);
-
         if (!$request->filled('pesan') && !$request->hasFile('lampirans')) {
             return back()->withErrors(['pesan' => 'Pesan atau lampiran wajib diisi.']);
         }
-
         $pesan = \App\Models\PesanLaporan::create([
             'pengaduan_id' => $pengaduan->id,
             'user_id'      => auth()->id(),
             'pesan'        => $request->pesan,
             'is_internal'  => false,
         ]);
-
         if ($request->hasFile('lampirans')) {
             foreach ($request->file('lampirans') as $file) {
                 $path = $file->store('chat-lampiran', 'public');
@@ -168,10 +182,7 @@ class PengaduanController extends Controller
                 ]);
             }
         }
-
-        if ($request->ajax()) {
-            return response()->json(['success' => true]);
-        }
+        if ($request->ajax()) return response()->json(['success' => true]);
         return back();
     }
 
@@ -183,8 +194,7 @@ class PengaduanController extends Controller
             ->where('pengaduan_id', $pengaduan->id)
             ->where('id', '>', $lastId)
             ->where('is_internal', false)
-            ->oldest()
-            ->get()
+            ->oldest()->get()
             ->map(function ($p) {
                 return [
                     'id'        => $p->id,
@@ -203,7 +213,6 @@ class PengaduanController extends Controller
                     ]),
                 ];
             });
-
         return response()->json($pesans);
     }
 }

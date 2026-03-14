@@ -254,16 +254,74 @@
 
         <div class="flex items-center gap-2">
             {{-- Notifikasi --}}
-            <button class="w-9 h-9 bg-violet-50 hover:bg-violet-100 rounded-xl flex items-center justify-center relative transition">
-                <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                </svg>
-                @php $notif = \App\Models\Notifikasi::where('user_id', auth()->id())->whereNull('dibaca_at')->count(); @endphp
-                @if($notif > 0)
-                <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">{{ $notif }}</span>
-                @endif
-            </button>
+            @php
+                $notif     = \App\Models\Notifikasi::where('user_id', auth()->id())->whereNull('dibaca_at')->count();
+                $notifList = \App\Models\Notifikasi::where('user_id', auth()->id())->latest()->take(8)->get();
+            @endphp
+            <div class="relative" id="notifWrap">
+                <button onclick="toggleNotif(event)" class="w-9 h-9 bg-violet-50 hover:bg-violet-100 rounded-xl flex items-center justify-center relative transition">
+                    <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    @if($notif > 0)
+                    <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">{{ $notif > 9 ? '9+' : $notif }}</span>
+                    @endif
+                </button>
+
+                {{-- Dropdown --}}
+                <div id="notifDropdown" class="hidden absolute right-0 top-11 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                        <div class="font-bold text-sm text-gray-800">Notifikasi</div>
+                        @if($notif > 0)
+                        <form method="POST" action="{{ route('petugas.notif.readall') }}">
+                            @csrf @method('PATCH')
+                            <button class="text-xs text-violet-600 hover:underline font-semibold">Tandai semua dibaca</button>
+                        </form>
+                        @endif
+                    </div>
+                    <div class="max-h-80 overflow-y-auto divide-y divide-gray-50">
+                        @forelse($notifList as $n)
+                        <a href="{{ $n->url ?? '#' }}"
+                           onclick="markRead({{ $n->id }}, this)"
+                           class="flex items-start gap-3 px-4 py-3 hover:bg-violet-50/50 transition {{ is_null($n->dibaca_at) ? 'bg-violet-50/30' : '' }}">
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5
+                                {{ $n->tipe === 'success' ? 'bg-emerald-100' : '' }}
+                                {{ $n->tipe === 'danger'  ? 'bg-red-100'     : '' }}
+                                {{ $n->tipe === 'info'    ? 'bg-blue-100'    : '' }}
+                                {{ $n->tipe === 'status'  ? 'bg-amber-100'   : '' }}
+                                {{ $n->tipe === 'pesan'   ? 'bg-violet-100'  : '' }}
+                                {{ !in_array($n->tipe,['success','danger','info','status','pesan']) ? 'bg-gray-100' : '' }}">
+                                @if($n->tipe === 'success')
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                @elseif($n->tipe === 'danger')
+                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                @elseif($n->tipe === 'pesan')
+                                <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                                @else
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                @endif
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-xs font-bold text-gray-800 truncate">{{ $n->judul }}</div>
+                                <div class="text-xs text-gray-500 mt-0.5 line-clamp-2">{{ $n->pesan }}</div>
+                                <div class="text-[10px] text-gray-400 mt-1">{{ $n->created_at->diffForHumans() }}</div>
+                            </div>
+                            @if(is_null($n->dibaca_at))
+                            <div class="w-2 h-2 bg-violet-500 rounded-full flex-shrink-0 mt-2"></div>
+                            @endif
+                        </a>
+                        @empty
+                        <div class="text-center py-10">
+                            <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            </div>
+                            <p class="text-xs text-gray-400 font-medium">Tidak ada notifikasi</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
 
             {{-- Avatar --}}
             <a href="{{ route('petugas.profil.edit') }}"
@@ -317,6 +375,24 @@
         document.getElementById('sidebar-overlay').classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
+    function toggleNotif(e) {
+        if (e) e.stopPropagation();
+        const d = document.getElementById('notifDropdown');
+        if (d) d.classList.toggle('hidden');
+    }
+    function markRead(id) {
+        fetch('/notif/' + id + '/baca', {
+            method: 'PATCH',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+        });
+    }
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('notifWrap');
+        if (wrap && !wrap.contains(e.target)) {
+            const d = document.getElementById('notifDropdown');
+            if (d) d.classList.add('hidden');
+        }
+    });
 </script>
 </body>
 </html>

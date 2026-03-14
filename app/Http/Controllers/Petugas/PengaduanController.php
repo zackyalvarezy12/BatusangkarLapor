@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Petugas;
 
 use App\Http\Controllers\Controller;
+use App\Mail\StatusLaporanMail;
 use App\Models\Pengaduan;
 use App\Models\PengaduanHistory;
 use App\Models\PesanLaporan;
 use App\Models\PesanLampiran;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PengaduanController extends Controller
 {
@@ -41,7 +43,6 @@ class PengaduanController extends Controller
             abort(403, 'Laporan ini bukan wilayah Anda.');
         }
 
-        // ← Tambah penilaians.user untuk tampilkan rating
         $pengaduan->load([
             'user', 'kategori', 'wilaya', 'petugas',
             'tanggapans.user', 'histories.user',
@@ -57,10 +58,12 @@ class PengaduanController extends Controller
         if (!is_null($user->wilaya_id) && $pengaduan->wilaya_id !== $user->wilaya_id) abort(403);
 
         $request->validate([
-            'status' => 'required|in:menunggu,proses,selesai,ditolak',
+            'status'     => 'required|in:menunggu,proses,selesai,ditolak',
+            'keterangan' => 'nullable|string|max:500',
         ]);
 
         $statusLama = $pengaduan->status;
+
         $pengaduan->update([
             'status'     => $request->status,
             'petugas_id' => auth()->id(),
@@ -74,13 +77,26 @@ class PengaduanController extends Controller
             'keterangan'   => $request->keterangan ?? 'Status diperbarui oleh petugas.',
         ]);
 
+        // Notifikasi in-app
         Notifikasi::create([
             'user_id' => $pengaduan->user_id,
             'judul'   => 'Status laporan diperbarui',
-            'pesan'   => "Laporan #{$pengaduan->kode_laporan} kini berstatus: {$request->status}",
-            'url'     => route('masyarakat.pengaduan.chat', $pengaduan->slug),
+            'pesan'   => "Laporan #{$pengaduan->kode_laporan} kini berstatus: {$pengaduan->status_badge['label']}",
+            'url'     => route('masyarakat.pengaduan.show', $pengaduan->slug),
             'tipe'    => 'status',
         ]);
+
+        // Kirim email ke pelapor
+        $pelapor = $pengaduan->user;
+        if ($pelapor && $pelapor->email) {
+            try {
+                Mail::to($pelapor->email)
+                    ->send(new StatusLaporanMail($pengaduan, $statusLama, $request->keterangan));
+            } catch (\Exception $e) {
+                // Gagal kirim email tidak boleh hentikan proses
+                \Log::warning('Gagal kirim email status laporan: ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', 'Status laporan berhasil diperbarui.');
     }
