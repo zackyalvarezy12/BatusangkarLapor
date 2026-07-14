@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') — BatusangkarLapor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
     <script>
@@ -14,7 +14,7 @@
         theme: {
             extend: {
                 fontFamily: {
-                    sans: ['Sora', 'sans-serif'],
+                    sans: ['Plus Jakarta Sans', 'sans-serif'],
                     mono: ['JetBrains Mono', 'monospace'],
                 },
                 colors: {
@@ -31,7 +31,7 @@
     </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Sora', sans-serif; background: #F8FAFF; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f8; }
         code, .mono { font-family: 'JetBrains Mono', monospace; }
 
         /* Scrollbar */
@@ -41,14 +41,14 @@
 
         /* Sidebar */
         #sidebar {
-            background: linear-gradient(175deg, #0B1628 0%, #0F1E3A 55%, #0B1628 100%);
+            background: linear-gradient(135deg, #040f2e 0%, #0b1e5c 60%, #0f2a72 100%);
         }
         #sidebar::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse at 0% 30%, rgba(59,95,203,0.18) 0%, transparent 65%),
-                        radial-gradient(ellipse at 100% 80%, rgba(245,158,11,0.06) 0%, transparent 60%);
+            background: radial-gradient(ellipse at 0% 30%, rgba(255,255,255,0.10) 0%, transparent 65%),
+                        radial-gradient(ellipse at 100% 80%, rgba(245,158,11,0.10) 0%, transparent 60%);
             pointer-events: none;
         }
 
@@ -292,19 +292,19 @@
 <div class="flex-1 lg:ml-[228px] flex flex-col min-h-screen overflow-y-auto">
 
     {{-- Topbar --}}
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/60 px-5 lg:px-7 py-3.5 flex items-center justify-between">
+    <header class="sticky top-0 z-40 border-b border-white/10 bg-gradient-to-r from-[#040f2e] via-[#0b1e5c] to-[#0f2a72] px-5 lg:px-7 py-3.5 flex items-center justify-between text-white">
         <div class="flex items-center gap-3">
-            <button onclick="toggleSidebar()" class="lg:hidden w-9 h-9 hover:bg-slate-100 rounded-xl flex items-center justify-center transition">
-                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <button onclick="toggleSidebar()" class="lg:hidden w-9 h-9 hover:bg-white/10 rounded-xl flex items-center justify-center transition">
+                <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
             <div class="hidden lg:flex items-center gap-2 text-sm">
-                <span class="text-brand font-semibold text-[13px]">Admin</span>
-                <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="text-white font-semibold text-[13px]">Admin</span>
+                <svg class="w-3 h-3 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                 </svg>
-                <span class="text-slate-500 text-[13px]">@yield('breadcrumb', 'Dashboard')</span>
+                <span class="text-white/70 text-[13px]">@yield('breadcrumb', 'Dashboard')</span>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -316,8 +316,8 @@
                 } catch(\Exception $e) { $notifCount = 0; $notifList = collect(); }
             @endphp
             <div class="relative" id="notifWrap">
-                <button onclick="toggleNotif(event)" class="relative w-9 h-9 hover:bg-slate-100 rounded-xl flex items-center justify-center transition">
-                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <button onclick="toggleNotif(event)" class="relative w-9 h-9 hover:bg-white/10 rounded-xl flex items-center justify-center transition">
+                    <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
                     @if($notifCount > 0)
@@ -378,12 +378,12 @@
                     </div>
                 </div>
             </div>
-            <a href="{{ route('admin.profil.edit') }}" class="flex items-center gap-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl transition">
-                <div class="w-6 h-6 rounded-lg bg-brand flex items-center justify-center text-white font-bold text-[11px]">
+            <a href="{{ route('admin.profil.edit') }}" class="flex items-center gap-2.5 bg-white/10 hover:bg-white/15 border border-white/15 px-3 py-2 rounded-xl transition">
+                <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-[11px]">
                     {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                 </div>
-                <span class="hidden sm:block text-[13px] font-semibold text-slate-700 max-w-[120px] truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
-                <svg class="w-3 h-3 text-slate-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="hidden sm:block text-[13px] font-semibold text-white max-w-[120px] truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
+                <svg class="w-3 h-3 text-white/70 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </a>
