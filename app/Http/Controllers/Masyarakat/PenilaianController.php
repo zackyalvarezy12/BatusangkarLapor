@@ -14,7 +14,7 @@ class PenilaianController extends Controller
         $pengaduan = Pengaduan::where('slug', $slug)->firstOrFail();
 
         // Hanya pelapor yang bisa beri penilaian
-        if ($pengaduan->user_id !== auth()->id()) {
+        if ((int) $pengaduan->user_id !== (int) auth()->id()) {
             return back()->with('error', 'Anda tidak berhak memberikan penilaian untuk laporan ini.');
         }
 

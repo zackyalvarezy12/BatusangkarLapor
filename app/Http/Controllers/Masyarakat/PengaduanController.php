@@ -107,7 +107,7 @@ class PengaduanController extends Controller
     public function show(Pengaduan $pengaduan)
     {
         abort_if(
-            $pengaduan->user_id !== Auth::id() && !$pengaduan->is_publik,
+            (int) $pengaduan->user_id !== (int) Auth::id() && !$pengaduan->is_publik,
             403
         );
 
@@ -137,7 +137,7 @@ class PengaduanController extends Controller
 
     public function destroy(Pengaduan $pengaduan)
     {
-        abort_if($pengaduan->user_id !== Auth::id(), 403);
+        abort_if((int) $pengaduan->user_id !== (int) Auth::id(), 403);
         abort_if($pengaduan->status !== 'menunggu', 403, 'Laporan yang sedang diproses tidak dapat dihapus.');
         $pengaduan->delete();
         return redirect()->route('masyarakat.pengaduan.index')
@@ -146,7 +146,7 @@ class PengaduanController extends Controller
 
     public function chat(Pengaduan $pengaduan)
     {
-        if ($pengaduan->user_id !== auth()->id()) abort(403);
+        if ((int) $pengaduan->user_id !== (int) auth()->id()) abort(403);
         $pengaduan->load(['kategori', 'wilaya', 'petugas']);
         $pesans = \App\Models\PesanLaporan::with(['user', 'lampirans'])
             ->where('pengaduan_id', $pengaduan->id)
@@ -156,7 +156,7 @@ class PengaduanController extends Controller
 
     public function kirimPesan(Request $request, Pengaduan $pengaduan)
     {
-        if ($pengaduan->user_id !== auth()->id()) abort(403);
+        if ((int) $pengaduan->user_id !== (int) auth()->id()) abort(403);
         $request->validate([
             'pesan'       => 'nullable|string|max:2000',
             'lampirans'   => 'nullable|array',
@@ -189,7 +189,7 @@ class PengaduanController extends Controller
 
     public function pesanBaru(Request $request, Pengaduan $pengaduan)
     {
-        if ($pengaduan->user_id !== auth()->id()) abort(403);
+        if ((int) $pengaduan->user_id !== (int) auth()->id()) abort(403);
         $lastId = $request->last_id ?? 0;
         $pesans = \App\Models\PesanLaporan::with(['user', 'lampirans'])
             ->where('pengaduan_id', $pengaduan->id)
