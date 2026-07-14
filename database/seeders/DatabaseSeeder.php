@@ -21,36 +21,11 @@ class DatabaseSeeder extends Seeder
         $admin = User::create([
             'name'              => 'Administrator',
             'email'             => 'admin@batusangkarlapor.test',
-            'password'          => 'password123',
+            'password'          => bcrypt('password123'),
             'role'              => 'admin',
             'wilaya_id'         => null,
             'is_active'         => true,
             'otp_verified'      => true,
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'name'              => 'Petugas Satu',
-            'email'             => 'petugas@batusangkarlapor.test',
-            'password'          => 'password123',
-            'role'              => 'petugas',
-            'wilaya_id'         => $wilayaIds['Lima Kaum'], // petugas terikat Lima Kaum
-            'is_active'         => true,
-            'otp_verified'      => true,
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'name'              => 'Budi Santoso',
-            'email'             => 'masyarakat@batusangkarlapor.test',
-            'password'          => 'password123',
-            'role'              => 'masyarakat',
-            'wilaya_id'         => $wilayaIds['Lima Kaum'], // masyarakat di Lima Kaum
-            'is_active'         => true,
-            'otp_verified'      => true,
-            'nik'               => '1306010101900001',
-            'no_hp'             => '08234567890',
-            'alamat'            => 'Jorong Dalam, Nagari Lima Kaum',
             'email_verified_at' => now(),
         ]);
 
