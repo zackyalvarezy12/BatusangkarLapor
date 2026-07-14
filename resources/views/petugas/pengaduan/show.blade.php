@@ -122,73 +122,10 @@
         </div>
         @endif
 
-        {{-- Form Tanggapi --}}
-        @if(in_array($pengaduan->status, ['menunggu','proses']))
-        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-            <h3 class="font-bold text-gray-700 text-sm mb-4 flex items-center gap-2">
-                <div class="w-6 h-6 bg-violet-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                </div>
-                Berikan Tanggapan
-            </h3>
-            <form method="POST" action="{{ route('petugas.pengaduan.tanggap', $pengaduan->slug) }}"
-                  enctype="multipart/form-data" class="space-y-4">
-                @csrf
-                <textarea name="isi" rows="4" required
-                          placeholder="Tulis tanggapan resmi terhadap laporan ini..."
-                          class="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-400 transition resize-none">{{ old('isi') }}</textarea>
-                <div class="flex items-center justify-between flex-wrap gap-3">
-                    <label class="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-violet-600 transition">
-                        <input type="checkbox" name="is_internal" value="1" class="rounded accent-violet-600">
-                        <span class="text-xs font-medium">Tanggapan Internal (tidak terlihat pelapor)</span>
-                    </label>
-                    <button type="submit"
-                            class="btn-violet inline-flex items-center gap-2 text-white font-semibold text-sm px-5 py-2.5 rounded-xl">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                        </svg>
-                        Kirim Tanggapan
-                    </button>
-                </div>
-            </form>
-        </div>
-        @endif
     </div>
 
     {{-- ── KANAN: Aksi + Timeline ── --}}
     <div class="space-y-5">
-
-        {{-- Update Status --}}
-        @if($pengaduan->status !== 'selesai' && $pengaduan->status !== 'ditolak')
-        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-            <h3 class="font-bold text-gray-700 text-sm mb-4">Update Status</h3>
-            <form method="POST" action="{{ route('petugas.pengaduan.status', $pengaduan->slug) }}" class="space-y-3">
-                @csrf @method('PATCH')
-                <select name="status" required
-                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-400 transition">
-                    <option value="">Pilih Status Baru</option>
-                    @if($pengaduan->status === 'menunggu')
-                    <option value="proses">Mulai Proses</option>
-                    @endif
-                    @if(in_array($pengaduan->status, ['menunggu','proses']))
-                    <option value="selesai">Tandai Selesai</option>
-                    <option value="ditolak">Tolak Laporan</option>
-                    @endif
-                </select>
-                <textarea name="keterangan" rows="2" placeholder="Catatan (opsional)..."
-                          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-400 transition resize-none"></textarea>
-                <button type="submit"
-                        class="w-full btn-violet text-white font-semibold text-sm py-2.5 rounded-xl flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    Update Status
-                </button>
-            </form>
-        </div>
-        @endif
 
         {{-- Chat --}}
         <a href="{{ route('petugas.pengaduan.chat', $pengaduan->slug) }}"
@@ -207,6 +144,33 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
+
+        {{-- Update Status --}}
+        @if(!in_array($pengaduan->status, ['selesai','ditolak']))
+        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+            <h3 class="font-bold text-gray-700 text-sm mb-5 flex items-center gap-2">
+                <div class="w-6 h-6 bg-violet-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </div>
+                Ubah Status Laporan
+            </h3>
+            <form method="POST" action="{{ route('petugas.pengaduan.status', $pengaduan->slug) }}">
+                @csrf
+                @method('PATCH')
+                <div class="space-y-4">
+                    <select name="status" class="w-full text-sm font-semibold bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-200">
+                        <option value="menunggu" {{ $pengaduan->status==='menunggu' ? 'selected' : '' }}>Belum Ditindak</option>
+                        <option value="proses"   {{ $pengaduan->status==='proses' ? 'selected' : '' }}>Sedang Ditindak</option>
+                        <option value="selesai"  {{ $pengaduan->status==='selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="ditolak"  {{ $pengaduan->status==='ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    </select>
+                    <button type="submit" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold px-4 py-3 rounded-2xl transition">Update Status</button>
+                </div>
+            </form>
+        </div>
+        @endif
 
         {{-- Riwayat Status --}}
         <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
