@@ -8,7 +8,7 @@
     $myPenilaian   = auth()->check() ? $penilaianData->where('user_id', auth()->id())->first() : null;
     $bolehNilai    = auth()->check()
                      && $pengaduan->status === 'selesai'
-                     && auth()->id() === $pengaduan->user_id
+                     && (int) auth()->id() === (int) $pengaduan->user_id
                      && !$myPenilaian;
 @endphp
 
