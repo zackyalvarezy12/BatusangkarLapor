@@ -58,13 +58,14 @@
                     ['label'=>'Kategori',   'val'=>$pengaduan->kategori->nama ?? '-'],
                     ['label'=>'Wilayah',    'val'=>$pengaduan->wilaya->nama ?? '-'],
                     ['label'=>'Pelapor',    'val'=>$pengaduan->is_anonim ? 'Anonim' : ($pengaduan->user->name ?? '-')],
+                    ['label'=>'Token Pelacak','val'=>$pengaduan->tracking_token, 'mono'=>true],
                     ['label'=>'Tanggal',    'val'=>$pengaduan->created_at->format('d M Y, H:i')],
                     ['label'=>'Publik',     'val'=>$pengaduan->is_publik ? 'Ya' : 'Tidak'],
                     ['label'=>'Views',      'val'=>$pengaduan->views . 'x dilihat'],
                 ] as $row)
                 <div class="bg-gray-50 rounded-2xl p-4">
                     <div class="text-xs text-gray-400 font-medium mb-1">{{ $row['label'] }}</div>
-                    <div class="text-sm font-semibold text-gray-800">{{ $row['val'] }}</div>
+                    <div class="text-sm font-semibold text-gray-800 {{ isset($row['mono']) ? 'font-mono' : '' }}">{{ $row['val'] }}</div>
                 </div>
                 @endforeach
             </div>

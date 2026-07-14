@@ -23,16 +23,17 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && !$user->is_active) {
+            return back()->withErrors(['email' => 'Akun Anda telah dinonaktifkan.'])->withInput();
+        }
+
         if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
         }
 
         $user = Auth::user();
-
-        if (!$user->is_active) {
-            Auth::logout();
-            return back()->withErrors(['email' => 'Akun Anda telah dinonaktifkan.']);
-        }
 
         AktivitasLog::create([
             'user_id'    => $user->id,

@@ -23,23 +23,20 @@ class PublicController extends Controller
     public function lacak(Request $request)
     {
         $pengaduan = null;
-        $kode      = $request->kode;
+        $token     = $request->token;
         $notFound  = false;
 
-        if ($kode) {
+        if ($token) {
             $pengaduan = Pengaduan::with([
                     'kategori', 'wilaya', 'petugas', 'histories.user'
                 ])
-                ->where(function($q) use ($kode) {
-                    $q->where('kode_laporan', $kode)
-                      ->orWhere('tracking_token', $kode);
-                })
+                ->where('tracking_token', $token)
                 ->first();
 
             if (!$pengaduan) $notFound = true;
         }
 
-        return view('public.lacak', compact('pengaduan', 'kode', 'notFound'));
+        return view('public.lacak', compact('pengaduan', 'token', 'notFound'));
     }
 
     public function faq()

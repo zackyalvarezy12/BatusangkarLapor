@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Existing custom styles can remain below. Tailwind added above without removing anything. */

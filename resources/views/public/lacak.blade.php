@@ -166,12 +166,11 @@
                     </svg>
                 </div>
                 <h1 class="font-serif text-2xl font-bold text-gray-900 mb-1">Lacak <em>Laporan</em> Anda</h1>
-                <p class="text-gray-400 text-sm max-w-xs leading-relaxed">Masukkan kode laporan atau token pelacak untuk melihat status terkini</p>
+                <p class="text-gray-400 text-sm max-w-xs leading-relaxed">Masukkan token pelacak untuk melihat status terkini</p>
             </div>
-
             <form method="GET" action="{{ route('lacak') }}" class="flex gap-2.5">
-                <input type="text" name="kode" value="{{ $kode ?? '' }}"
-                       placeholder="Contoh: BL-2026-00001 atau token pelacak"
+                <input type="text" name="token" value="{{ $token ?? '' }}"
+                       placeholder="Masukkan token pelacak (contoh: ABCD-EFGH-IJKL)"
                        class="search-input">
                 <button type="submit"
                         class="flex-shrink-0 flex items-center gap-2 text-white font-bold px-5 py-3 rounded-2xl text-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
@@ -185,10 +184,8 @@
 
             {{-- Tips --}}
             <div class="flex items-center gap-2 mt-4 justify-center flex-wrap">
-                <span class="text-[11px] text-gray-400">Format:</span>
-                <code class="text-[11px] font-bold text-[#1a3a6b] bg-[#1a3a6b]/6 px-2 py-0.5 rounded-lg">BL-2026-00001</code>
-                <span class="text-gray-300 text-[11px]">atau</span>
-                <code class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg">token-pelacak</code>
+                <span class="text-[11px] text-gray-400">Format token pelacak:</span>
+                <code class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg">ABCD-EFGH-IJKL</code>
             </div>
         </div>
     </div>
@@ -205,7 +202,7 @@
             </div>
             <p class="font-bold text-gray-800 mb-1.5">Laporan Tidak Ditemukan</p>
             <p class="text-gray-400 text-sm leading-relaxed">
-                Kode <code class="font-mono font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-lg text-[13px]">{{ $kode }}</code>
+                Token <code class="font-mono font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-lg text-[13px]">{{ $token }}</code>
                 tidak terdaftar dalam sistem.
             </p>
             <p class="text-gray-400 text-xs mt-1.5">Pastikan kode atau token yang Anda masukkan sudah benar.</p>
@@ -261,11 +258,11 @@
                     @if($pengaduan->is_anonim)
                         <span class="text-[10px] font-bold bg-white/10 text-white/60 px-2 py-0.5 rounded-full border border-white/15 ml-1">Anonim</span>
                     @endif
+                    <div class="progress-wrap">
                 </div>
 
                 {{-- Progress tracker (hanya kalau bukan ditolak) --}}
                 @if(!$isDitolak)
-                <div class="progress-wrap">
                     @foreach([['key'=>'menunggu','label'=>'Menunggu'],['key'=>'diproses','label'=>'Diproses'],['key'=>'selesai','label'=>'Selesai']] as $si => $st)
                     <div class="p-step {{ $si < $curStep ? 'done' : ($si === $curStep ? 'active' : '') }}">
                         <div class="p-dot {{ $si < $curStep ? 'done' : ($si === $curStep ? 'active' : '') }}">

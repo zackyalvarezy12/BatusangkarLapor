@@ -45,7 +45,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
-
+    
 Route::middleware(['auth', 'must_change_password'])->group(function () {
     Route::get('/ganti-password',  [\App\Http\Controllers\Auth\ChangePasswordController::class, 'show'])->name('password.change');
     Route::post('/ganti-password', [\App\Http\Controllers\Auth\ChangePasswordController::class, 'update'])->name('password.update');

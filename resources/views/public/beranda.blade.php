@@ -937,7 +937,7 @@
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
             </span>
-            Bergabung Sekarang
+            Bergabung Sekarang 
         </div>
         <h2 class="reveal font-serif text-4xl lg:text-5xl text-white mb-5 leading-[1.1]">
             Siap Menyampaikan<br><em class="grad-text">Aspirasi Anda?</em>
@@ -1019,23 +1019,27 @@
             <div>
                 <div class="text-white font-bold mb-4 text-sm uppercase tracking-wide">Kontak</div>
                 <div class="space-y-3 text-sm">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="https://www.google.com/maps?sca_esv=b67966820d436860&output=search&q=kantor+bupati+tanah+datar&source=lnms&entry=mc"
+                       target="_blank" rel="noopener"
+                       class="flex items-start gap-3 hover:text-white transition-colors group">
+                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400 group-hover:text-amber-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
                         </svg>
                         <span>Kantor Bupati Tanah Datar</span>
-                    </div>
-                    <div class="flex items-start gap-3">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    </a>
+                    <a href="https://www.google.com/maps/place/Batusangkar,+Baringin,+Kec.+Lima+Kaum,+Kabupaten+Tanah+Datar,+Sumatera+Barat/@-0.4577941,100.5713967,14z/data=!4m6!3m5!1s0x2fd52d6c912f19e5:0x3425e9d27053fd72!8m2!3d-0.4577941!4d100.5919963!16zL20vMGRsZ3Z4!5m1!1e4?entry=ttu&g_ep=EgoyMDI2MDMxOC4xIKXMDSoASAFQAw%3D%3D"
+                       target="_blank" rel="noopener"
+                       class="flex items-start gap-3 hover:text-white transition-colors group">
+                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400 group-hover:text-amber-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         <span>Batusangkar, Sumatera Barat</span>
-                    </div>
+                    </a>
                     <div class="flex items-start gap-3">
                         <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/>
                         </svg>
-                        <a href="https://www.tanahdatar.go.id" class="hover:text-white transition-colors">www.tanahdatar.go.id</a>
+                        <a href="https://www.tanahdatar.go.id/beranda" target="_blank" rel="noopener" class="hover:text-white transition-colors">www.tanahdatar.go.id</a>
                     </div>
                 </div>
             </div>
@@ -1044,11 +1048,10 @@
         <div class="border-t border-gray-800/60 pt-7 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600">
             <span>© {{ date('Y') }} BatusangkarLapor — Pemerintah Kabupaten Tanah Datar. Hak Cipta Dilindungi | zacky alvarezy</span>
             <span class="flex items-center gap-1.5">
-                Dibuat dengan
-                <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                Dibuat dengan warga batusangkar yang peduli <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                 </svg>
-                untuk warga Tanah Datar
+                <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
             </span>
         </div>
     </div>

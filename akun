@@ -1,0 +1,28 @@
+administrator
+
+#cara buat akun
+
+#rolenya ada (admin,petugas,masyarakat)
+
+\App\Models\User::create([
+    'name' => 'admin',
+    'email' => 'admin@gmail.com',
+    'password' => bcrypt('12345678'),
+    'role' => 'admin', 
+    'email_verified_at' => now(),
+]);
+
+
+(petugas) 
+
+zackyanakapak@gmail.com
+12345678
+putrawaza1@gmail.com
+12345678
+
+(masyarakat)
+
+nahadatulnajawa0@gmail.com 
+12345678
+fathyusman58@gmail.com
+12345678

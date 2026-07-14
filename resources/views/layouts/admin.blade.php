@@ -22,6 +22,8 @@
                     brand:  { DEFAULT:'#1E3A8A', light:'#3B5FCB', muted:'#1e3a8a20' },
                     gold:   { DEFAULT:'#F59E0B', light:'#FCD34D', dark:'#D97706' },
                     ink:    { DEFAULT:'#0F172A', muted:'#64748B', faint:'#CBD5E1' },
+                    primary:   { DEFAULT:'#1E3A8A', light:'#3B5FCB', muted:'#1e3a8a20' },
+                    secondary: { DEFAULT:'#F59E0B', light:'#FCD34D', dark:'#D97706' },
                 },
             }
         }
