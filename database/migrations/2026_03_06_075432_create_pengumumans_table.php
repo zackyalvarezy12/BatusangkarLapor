@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('konten');
             $table->string('gambar')->nullable();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->boolean('is_aktif')->default(true);
             $table->timestamp('diterbitkan_at')->nullable();
             $table->timestamps();

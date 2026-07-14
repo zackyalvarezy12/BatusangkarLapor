@@ -7,7 +7,7 @@
 
 {{-- ══ HERO BANNER ══ --}}
 <div class="relative overflow-hidden rounded-2xl p-7 shadow-2xl shadow-navy/30"
-     style="background: linear-gradient(135deg, #040a14 0%, #0B1628 45%, #0F2050 100%);">
+     style="background: linear-gradient(135deg, #040f2e 0%, #0b1e5c 55%, #1a3a8f 100%);">
     {{-- Dot grid --}}
     <div class="absolute inset-0 opacity-[0.06]"
          style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 28px 28px;"></div>

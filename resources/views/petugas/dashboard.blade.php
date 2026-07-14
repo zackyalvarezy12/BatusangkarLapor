@@ -22,7 +22,7 @@ $persen = $total > 0 ? round(($selesai / $total) * 100) : 0;
 
 {{-- ══════ HERO ══════ --}}
 <div class="relative overflow-hidden rounded-3xl p-8"
-     style="background: linear-gradient(135deg, #3b0764 0%, #5b21b6 50%, #7c3aed 100%);">
+     style="background: linear-gradient(135deg, #040f2e 0%, #0b1e5c 55%, #1a3a8f 100%);">
 
     {{-- Pattern --}}
     <div class="absolute inset-0 opacity-10">
@@ -37,8 +37,8 @@ $persen = $total > 0 ? round(($selesai / $total) * 100) : 0;
     </div>
 
     {{-- Glow blobs --}}
-    <div class="absolute -top-16 -right-16 w-64 h-64 bg-violet-400 rounded-full opacity-20 blur-3xl"></div>
-    <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-fuchsia-500 rounded-full opacity-15 blur-3xl"></div>
+    <div class="absolute -top-16 -right-16 w-64 h-64 bg-blue-400 rounded-full opacity-20 blur-3xl"></div>
+    <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-blue-500 rounded-full opacity-15 blur-3xl"></div>
 
     <div class="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div class="flex items-center gap-5">

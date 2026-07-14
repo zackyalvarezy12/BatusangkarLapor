@@ -24,6 +24,13 @@ class RoleMiddleware
         }
 
         if (!in_array($user->role, $roles)) {
+            \Log::error('Role Forbidden', [
+                'user_id'   => $user->id,
+                'user_role' => $user->role,
+                'allowed'   => $roles,
+                'path'      => $request->path(),
+                'method'    => $request->method(),
+            ]);
             abort(403, 'Akses ditolak.');
         }
 

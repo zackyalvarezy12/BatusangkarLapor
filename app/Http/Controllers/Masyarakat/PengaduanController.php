@@ -41,6 +41,7 @@ class PengaduanController extends Controller
             'deskripsi'   => 'required|string',
             'lampiran'    => 'nullable|array|max:5',
             'lampiran.*'  => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'visibility'  => 'required|in:anonim,publik',
         ]);
 
         $lampiranPaths = [];
@@ -57,8 +58,8 @@ class PengaduanController extends Controller
             'wilaya_id'    => $request->wilayah_id,
             'deskripsi'    => $request->deskripsi,
             'lampiran'     => !empty($lampiranPaths) ? json_encode($lampiranPaths) : null,
-            'is_anonim'    => $request->boolean('is_anonim'),
-            'is_publik'    => $request->boolean('is_publik'),
+            'is_anonim'    => $request->visibility === 'anonim',
+            'is_publik'    => $request->visibility === 'publik',
             'status'       => 'menunggu',
         ]);
 

@@ -200,6 +200,15 @@
                 <span class="hidden sm:inline">Buat Laporan</span>
                 <span class="sm:hidden">Laporan</span>
             </a>
+            <a href="{{ route('masyarakat.profil.edit') }}"
+               class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition"
+               style="background:rgba(255,255,255,.12);color:#ffffff;border:1px solid rgba(255,255,255,.18);">
+                <svg style="width:14px;height:14px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1118.88 6.196 9 9 0 015.121 17.804z"/>
+                </svg>
+                <span class="hidden sm:inline">Profil</span>
+                <span class="sm:hidden">Akun</span>
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"

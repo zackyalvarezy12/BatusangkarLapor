@@ -62,7 +62,14 @@ class UserController extends Controller
                 $pesan = "Akun berhasil dibuat. Gagal kirim email. Password sementara: <strong>{$passwordSementara}</strong>";
             }
         } else {
-            $pesan = "Akun <strong>{$user->name}</strong> berhasil dibuat. Password sementara: <strong>{$passwordSementara}</strong>";
+            try {
+                Mail::to($user->email)->send(
+                    new \App\Mail\AkunMasyarakatMail($user, $passwordSementara)
+                );
+                $pesan = "Akun masyarakat berhasil dibuat. Email dikirim ke <strong>{$user->email}</strong>.";
+            } catch (\Exception $e) {
+                $pesan = "Akun berhasil dibuat. Gagal kirim email. Password sementara: <strong>{$passwordSementara}</strong>";
+            }
         }
 
         return redirect()->route('admin.user.index')->with('success', $pesan);

@@ -137,7 +137,8 @@
             {{-- Opsi --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-2xl cursor-pointer hover:border-primary/30 hover:bg-blue-50/20 transition">
-                    <input type="checkbox" name="is_anonim" value="1" {{ old('is_anonim') ? 'checked':'' }}
+                    <input type="radio" name="visibility" value="anonim"
+                           {{ old('visibility', 'publik') === 'anonim' ? 'checked' : '' }}
                            class="w-4 h-4 text-primary rounded">
                     <div>
                         <p class="text-sm font-semibold text-gray-700">Laporan Anonim</p>
@@ -145,7 +146,8 @@
                     </div>
                 </label>
                 <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-2xl cursor-pointer hover:border-primary/30 hover:bg-blue-50/20 transition">
-                    <input type="checkbox" name="is_publik" value="1" checked {{ old('is_publik') ? 'checked':'' }}
+                    <input type="radio" name="visibility" value="publik"
+                           {{ old('visibility', 'publik') === 'publik' ? 'checked' : '' }}
                            class="w-4 h-4 text-primary rounded">
                     <div>
                         <p class="text-sm font-semibold text-gray-700">Laporan Publik</p>
@@ -174,7 +176,7 @@
                     Batal
                 </a>
                 <button type="submit"
-                        class="flex-1 bg-primary hover:bg-blue-900 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                        class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-700/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>

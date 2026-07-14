@@ -15,6 +15,7 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduan;
 use App\Http\Controllers\Masyarakat\PengaduanController as MasyarakatPengaduan;
 use App\Http\Controllers\Masyarakat\PenilaianController;
+use App\Http\Controllers\Masyarakat\ProfilController;
 
 // ═══════════════════════════════════════════════
 // PUBLIC ROUTES
@@ -75,6 +76,12 @@ Route::middleware(['auth', 'role:masyarakat'])
     Route::get('/semua',          [MasyarakatPengaduan::class, 'index'])->name('pengaduan.index');
     Route::get('/buat',           [MasyarakatPengaduan::class, 'create'])->name('pengaduan.create');
     Route::post('/buat',          [MasyarakatPengaduan::class, 'store'])->name('pengaduan.store');
+
+    Route::get('/profil', [ProfilController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+    Route::get('/profil/password', [ProfilController::class, 'editPassword'])->name('password.edit');
+    Route::put('/profil/password', [ProfilController::class, 'updatePassword'])->name('password.update');
+
     Route::get('/{pengaduan}',    [MasyarakatPengaduan::class, 'show'])->name('pengaduan.show');
     Route::delete('/{pengaduan}', [MasyarakatPengaduan::class, 'destroy'])->name('pengaduan.destroy');
 
