@@ -307,7 +307,7 @@
                 <div>Batusangkar, {{ $tanggalCetak }}</div>
                 <div class="jabatan">Petugas Penanganan Laporan</div>
                 <div class="nama">{{ $petugas->name }}</div>
-                <div class="nip">NIP: {{ $petugas->nik ? '***' . substr($petugas->nik, -4) : '(Belum Terdaftar)' }}</div>
+                
             </td>
             <td>
                 <div>Mengetahui,</div>
