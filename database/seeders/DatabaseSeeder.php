@@ -11,23 +11,26 @@ class DatabaseSeeder extends Seeder
     {
         // ── Wilayas DULU (sebelum user, karena user FK ke wilayas) ──
         $kecamatans = ['Lima Kaum', 'Batusangkar', 'Sungai Tarab', 'Sungayang', 'Pariangan', 'Rambatan'];
-        $wilayaIds  = [];
         foreach ($kecamatans as $kec) {
-            $w = Wilaya::create(['nama' => $kec, 'tipe' => 'kecamatan', 'is_active' => true]);
-            $wilayaIds[$kec] = $w->id;
+            Wilaya::firstOrCreate(
+                ['nama' => $kec],
+                ['tipe' => 'kecamatan', 'is_active' => true]
+            );
         }
 
         // ── Users ──
-        $admin = User::create([
-            'name'              => 'Administrator',
-            'email'             => 'admin@batusangkarlapor.test',
-            'password'          => bcrypt('password123'),
-            'role'              => 'admin',
-            'wilaya_id'         => null,
-            'is_active'         => true,
-            'otp_verified'      => true,
-            'email_verified_at' => now(),
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@batusangkarlapor.test'],
+            [
+                'name'              => 'Administrator',
+                'password'          => bcrypt('password123'),
+                'role'              => 'admin',
+                'wilaya_id'         => null,
+                'is_active'         => true,
+                'otp_verified'      => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         // ── Kategoris ──
         $kategoris = [
@@ -40,7 +43,10 @@ class DatabaseSeeder extends Seeder
             ['nama' => 'Lainnya',                  'ikon' => 'ellipsis-horizontal','warna' => '#6b7280', 'urutan' => 7],
         ];
         foreach ($kategoris as $k) {
-            Kategori::create(array_merge($k, ['is_active' => true]));
+            Kategori::firstOrCreate(
+                ['nama' => $k['nama']],
+                array_merge($k, ['is_active' => true])
+            );
         }
 
         // ── FAQs ──
@@ -57,16 +63,21 @@ class DatabaseSeeder extends Seeder
              'jawaban'    => 'Ya. Data sensitif disimpan terenkripsi AES-256. Hanya admin yang dapat mengaksesnya.'],
         ];
         foreach ($faqs as $i => $faq) {
-            Faq::create(array_merge($faq, ['urutan' => $i + 1, 'is_aktif' => true]));
+            Faq::firstOrCreate(
+                ['pertanyaan' => $faq['pertanyaan']],
+                array_merge($faq, ['urutan' => $i + 1, 'is_aktif' => true])
+            );
         }
 
         // Pengumuman
-        Pengumuman::create([
-            'judul'          => 'Selamat Datang di BatusangkarLapor',
-            'konten'         => '<p>BatusangkarLapor adalah platform pengaduan masyarakat resmi Pemerintah Kabupaten Tanah Datar.</p>',
-            'user_id'        => $admin->id,
-            'is_aktif'       => true,
-            'diterbitkan_at' => now(),
-        ]);
+        Pengumuman::firstOrCreate(
+            ['judul' => 'Selamat Datang di BatusangkarLapor'],
+            [
+                'konten'         => '<p>BatusangkarLapor adalah platform pengaduan masyarakat resmi Pemerintah Kabupaten Tanah Datar.</p>',
+                'user_id'        => $admin->id,
+                'is_aktif'       => true,
+                'diterbitkan_at' => now(),
+            ]
+        );
     }
 }

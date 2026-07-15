@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Masyarakat;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,19 +35,48 @@ class ProfilController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required',
+            'current_password' => 'nullable',
             'password'         => 'required|min:8|confirmed',
         ]);
 
         $user = auth()->user();
+        $currentPassword = (string) $request->input('current_password', '');
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        $isTemporaryPassword = $this->isTemporaryPassword($user, $currentPassword);
+
+        if (!$isTemporaryPassword && $currentPassword !== '' && !Hash::check($currentPassword, $user->password)) {
             return back()->withErrors(['current_password' => 'Password saat ini salah.']);
         }
 
-        $user->update(['password' => Hash::make($request->password)]);
+        if ($currentPassword === '' && !$this->isTemporaryPassword($user, '')) {
+            return back()->withErrors(['current_password' => 'Password saat ini wajib diisi.']);
+        }
+
+        $user->update([
+            'password'             => Hash::make($request->password),
+            'must_change_password' => false,
+        ]);
 
         return redirect()->route('masyarakat.dashboard')
                          ->with('success', 'Password berhasil diperbarui!');
+    }
+
+    private function isTemporaryPassword(User $user, string $currentPassword): bool
+    {
+        if (!$user->email) {
+            return false;
+        }
+
+        $patterns = [
+            '/^BL-[A-Z0-9]{8}$/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $currentPassword) === 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

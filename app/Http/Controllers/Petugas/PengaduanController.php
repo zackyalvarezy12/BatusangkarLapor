@@ -26,10 +26,19 @@ class PengaduanController extends Controller
 
     public function index(Request $request)
     {
+        $search = trim((string) $request->search);
+
         $pengaduans = $this->queryWilaya()
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->when($request->search, fn($q) => $q->where('judul', 'like', "%{$request->search}%"))
-            ->latest()->paginate(15);
+            ->when($request->filled('status'), fn($q) => $q->where('status', $request->status))
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('judul', 'like', "%{$search}%")
+                        ->orWhere('kode_laporan', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
         return view('petugas.pengaduan.index', compact('pengaduans'));
     }

@@ -95,7 +95,7 @@
                         @endif
                         @if($p->pesan)
                         <div class="px-4 py-3 rounded-2xl text-sm leading-relaxed
-                            {{ $isSelf ? 'bg-primary text-white rounded-tr-sm' : 'bg-gray-100 text-gray-800 rounded-tl-sm' }}">
+                            {{ $isSelf ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-100 text-gray-800 rounded-tl-sm' }}">
                             {{ $p->pesan }}
                         </div>
                         @endif
@@ -174,7 +174,7 @@
                                       style="max-height:120px"></textarea>
                         </div>
                         <button type="submit" id="sendBtn"
-                                class="w-10 h-10 bg-primary hover:bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0 transition disabled:opacity-50">
+                                class="w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center justify-center flex-shrink-0 transition disabled:opacity-50">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
