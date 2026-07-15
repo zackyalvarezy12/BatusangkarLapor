@@ -116,7 +116,8 @@ class PengaduanController extends Controller
         $request->validate([
             'status'     => 'required|in:menunggu,proses,selesai,ditolak',
             'keterangan' => 'nullable|string|max:500',
-            'bukti_file' => 'nullable|file|image|max:2048',
+            // allow images, pdf, office documents and common archives up to 50MB
+            'bukti_file' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,zip,rar|max:51200',
         ]);
 
         $statusLama = $pengaduan->status;

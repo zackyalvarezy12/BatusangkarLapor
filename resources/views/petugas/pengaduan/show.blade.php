@@ -182,7 +182,7 @@
                     </select>
                     <div class="rounded-2xl border border-dashed border-gray-300 p-4 bg-gray-50">
                         <label class="block text-xs font-semibold text-gray-600 mb-2">Bukti penyelesaian (wajib saat selesai)</label>
-                        <input type="file" name="bukti_file" accept="image/*,.pdf" class="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-violet-600 file:text-white file:text-sm file:font-semibold hover:file:bg-violet-700">
+                        <input type="file" name="bukti_file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar" class="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-violet-600 file:text-white file:text-sm file:font-semibold hover:file:bg-violet-700">
                         <p class="text-[11px] text-gray-400 mt-2">Unggah foto atau file bukti tugas selesai. File akan tampil di detail laporan dan dikirim ke email pelapor.</p>
                     </div>
                     <button type="submit" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold px-4 py-3 rounded-2xl transition">Update Status</button>
