@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class StatusLaporanMail extends Mailable
 {
@@ -16,7 +17,8 @@ class StatusLaporanMail extends Mailable
     public function __construct(
         public Pengaduan $pengaduan,
         public string $statusLama,
-        public ?string $keterangan = null
+        public ?string $keterangan = null,
+        public ?string $buktiFilePath = null
     ) {}
 
     public function envelope(): Envelope
@@ -35,7 +37,20 @@ class StatusLaporanMail extends Mailable
                 'pengaduan'  => $this->pengaduan,
                 'statusLama' => $this->statusLama,
                 'keterangan' => $this->keterangan,
+                'buktiFilePath' => $this->buktiFilePath,
             ]
         );
+    }
+
+    public function build(): self
+    {
+        if ($this->buktiFilePath && Storage::disk('public')->exists($this->buktiFilePath)) {
+            $this->attach(Storage::disk('public')->path($this->buktiFilePath), [
+                'as' => basename($this->buktiFilePath),
+                'mime' => Storage::disk('public')->mimeType($this->buktiFilePath),
+            ]);
+        }
+
+        return $this;
     }
 }

@@ -142,6 +142,13 @@
             <code>{{ $pengaduan->tracking_token }}</code>
         </div>
 
+        @if($buktiFilePath)
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 18px; margin:16px 0; font-size:13px; color:#334155; line-height:1.6;">
+            <strong>Bukti penyelesaian terlampir:</strong><br>
+            <a href="{{ asset('storage/' . $buktiFilePath) }}" style="color:#1a3a6b; font-weight:600;">{{ basename($buktiFilePath) }}</a>
+        </div>
+        @endif
+
         {{-- CTA Button --}}
         <div class="cta">
             <a href="{{ route('masyarakat.pengaduan.show', $pengaduan->slug) }}" class="btn">

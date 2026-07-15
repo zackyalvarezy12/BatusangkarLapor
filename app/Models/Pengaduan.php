@@ -18,6 +18,7 @@ class Pengaduan extends Model
         'judul', 'slug', 'kode_laporan', 'deskripsi', 'lampiran',
         'tracking_token', 'user_id', 'kategori_id', 'wilaya_id',
         'petugas_id', 'status', 'alasan_tolak',
+        'bukti_selesai_path', 'bukti_selesai_nama', 'bukti_selesai_tipe', 'bukti_selesai_ukuran',
         'is_anonim', 'is_publik', 'views',
     ];
 

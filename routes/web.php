@@ -107,6 +107,7 @@ Route::middleware(['auth', 'role:petugas', 'must_change_password'])
 
     Route::get('/laporan',                      [PetugasPengaduan::class, 'index'])->name('pengaduan.index');
     Route::get('/laporan/{pengaduan}',          [PetugasPengaduan::class, 'show'])->name('pengaduan.show');
+    Route::get('/laporan/{pengaduan}/pdf',     [PetugasPengaduan::class, 'downloadPdf'])->name('pengaduan.pdf');
     Route::patch('/laporan/{pengaduan}/status', [PetugasPengaduan::class, 'updateStatus'])->name('pengaduan.status');
     Route::post('/laporan/{pengaduan}/tanggap', [PetugasPengaduan::class, 'tanggapi'])->name('pengaduan.tanggap');
 

@@ -8,7 +8,7 @@
 <div class="py-6 space-y-5">
 
     {{-- Back + Header --}}
-    <div class="flex items-center gap-3">
+<div class="flex items-center gap-3">
         <a href="{{ route('masyarakat.pengaduan.index') }}"
            class="w-9 h-9 bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50 rounded-xl flex items-center justify-center transition flex-shrink-0">
             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,6 +86,37 @@
                     {{ $pengaduan->deskripsi }}
                 </div>
             </div>
+
+            {{-- Bukti Penyelesaian --}}
+            @if($pengaduan->status === 'selesai' && $pengaduan->bukti_selesai_path)
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-700 text-sm mb-4 flex items-center gap-2">
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5 5 5M12 5v10"/>
+                        </svg>
+                    </div>
+                    Bukti Penyelesaian
+                </h3>
+                <div class="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                    @php $isImg = preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $pengaduan->bukti_selesai_nama ?? ''); @endphp
+                    @if($isImg)
+                        <a href="{{ asset('storage/'.$pengaduan->bukti_selesai_path) }}" target="_blank" class="block overflow-hidden rounded-2xl border border-gray-200">
+                            <img src="{{ asset('storage/'.$pengaduan->bukti_selesai_path) }}" alt="Bukti penyelesaian" class="w-full h-auto object-cover">
+                        </a>
+                    @else
+                        <a href="{{ asset('storage/'.$pengaduan->bukti_selesai_path) }}" target="_blank" class="flex items-center gap-3 p-3 bg-white hover:bg-blue-50 border border-gray-200 rounded-2xl transition">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">{{ $pengaduan->bukti_selesai_nama ?? basename($pengaduan->bukti_selesai_path) }}</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+            @endif
 
             {{-- Lampiran --}}
             @if($pengaduan->lampiran)

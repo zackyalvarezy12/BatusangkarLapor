@@ -9,8 +9,10 @@ use App\Models\PengaduanHistory;
 use App\Models\PesanLaporan;
 use App\Models\PesanLampiran;
 use App\Models\Notifikasi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class PengaduanController extends Controller
 {
@@ -61,22 +63,84 @@ class PengaduanController extends Controller
         return view('petugas.pengaduan.show', compact('pengaduan'));
     }
 
-    public function updateStatus(Request $request, Pengaduan $pengaduan)
+    public function downloadPdf(Pengaduan $pengaduan)
     {
+        $user = auth()->user();
+        if (!is_null($user->wilaya_id) && $pengaduan->wilaya_id !== $user->wilaya_id) {
+            abort(403, 'Laporan ini bukan wilayah Anda.');
+        }
+
+        $pengaduan->load(['user', 'kategori', 'wilaya', 'petugas', 'tanggapans.user', 'histories.user']);
+
+        $lampiran = [];
+        if ($pengaduan->lampiran) {
+            $files = is_array($pengaduan->lampiran) ? $pengaduan->lampiran : json_decode($pengaduan->lampiran, true) ?? [];
+            foreach ($files as $file) {
+                $lampiran[] = [
+                    'path' => $file,
+                    'nama' => basename($file),
+                    'isImage' => preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $file),
+                ];
+            }
+        }
+
+        $pdf = Pdf::loadView('petugas.pengaduan.pdf', [
+            'pengaduan' => $pengaduan,
+            'petugas' => auth()->user(),
+            'lampiran' => $lampiran,
+            'tanggalCetak' => now()->translatedFormat('d F Y'),
+        ])->setPaper('a4', 'portrait');
+
+        // Allow DomPDF to read local files (storage) and set chroot to workspace
+        try {
+            $pdf->setOptions([
+                'isRemoteEnabled' => true,
+                'chroot' => base_path(),
+            ]);
+        } catch (\Exception $e) {
+            // ignore if option not supported in this environment
+        }
+
+        return $pdf->download('Laporan-Pengaduan-' . $pengaduan->kode_laporan . '.pdf');
+    }
+
+    public function updateStatus(Request $request, $pengaduan)
+    {
+        $pengaduan = $pengaduan instanceof Pengaduan
+            ? $pengaduan
+            : Pengaduan::where('slug', $pengaduan)->firstOrFail();
+
         $user = auth()->user();
         if (!is_null($user->wilaya_id) && $pengaduan->wilaya_id !== $user->wilaya_id) abort(403);
 
         $request->validate([
             'status'     => 'required|in:menunggu,proses,selesai,ditolak',
             'keterangan' => 'nullable|string|max:500',
+            'bukti_file' => 'nullable|file|image|max:2048',
         ]);
 
         $statusLama = $pengaduan->status;
 
-        $pengaduan->update([
+        $data = [
             'status'     => $request->status,
             'petugas_id' => auth()->id(),
-        ]);
+        ];
+
+        if ($request->status === 'selesai') {
+            if ($request->hasFile('bukti_file')) {
+                $file = $request->file('bukti_file');
+                $path = $file->store('bukti-selesai', 'public');
+                $data['bukti_selesai_path'] = $path;
+                $data['bukti_selesai_nama'] = $file->getClientOriginalName();
+                $data['bukti_selesai_tipe'] = $file->getMimeType();
+                $data['bukti_selesai_ukuran'] = $file->getSize();
+            } else {
+                return back()->withErrors(['bukti_file' => 'Bukti penyelesaian wajib diunggah saat menandai laporan selesai.']);
+            }
+        }
+
+        $pengaduan->update($data);
+        $pengaduan->refresh();
 
         PengaduanHistory::create([
             'pengaduan_id' => $pengaduan->id,
@@ -100,7 +164,7 @@ class PengaduanController extends Controller
         if ($pelapor && $pelapor->email) {
             try {
                 Mail::to($pelapor->email)
-                    ->send(new StatusLaporanMail($pengaduan, $statusLama, $request->keterangan));
+                    ->send(new StatusLaporanMail($pengaduan, $statusLama, $request->keterangan, $pengaduan->bukti_selesai_path));
             } catch (\Exception $e) {
                 // Gagal kirim email tidak boleh hentikan proses
                 \Log::warning('Gagal kirim email status laporan: ' . $e->getMessage());

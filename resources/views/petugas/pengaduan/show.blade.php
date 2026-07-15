@@ -145,6 +145,20 @@
             </svg>
         </a>
 
+        {{-- Download PDF --}}
+        <a href="{{ route('petugas.pengaduan.pdf', $pengaduan->slug) }}" target="_blank"
+           class="flex items-center gap-3 bg-white border border-gray-200 hover:border-violet-300 hover:bg-violet-50 text-gray-700 rounded-2xl p-5 transition shadow-sm">
+            <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4m7-4l-5 5 5 5"/>
+                </svg>
+            </div>
+            <div class="flex-1 text-sm font-semibold">
+                Unduh PDF Laporan Resmi
+                <div class="text-xs text-gray-500">Format A4 resmi untuk penyampaian ke dinas terkait</div>
+            </div>
+        </a>
+
         {{-- Update Status --}}
         @if(!in_array($pengaduan->status, ['selesai','ditolak']))
         <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
@@ -156,7 +170,7 @@
                 </div>
                 Ubah Status Laporan
             </h3>
-            <form method="POST" action="{{ route('petugas.pengaduan.status', $pengaduan->slug) }}">
+            <form method="POST" action="{{ route('petugas.pengaduan.status', $pengaduan->slug) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PATCH')
                 <div class="space-y-4">
@@ -166,6 +180,11 @@
                         <option value="selesai"  {{ $pengaduan->status==='selesai' ? 'selected' : '' }}>Selesai</option>
                         <option value="ditolak"  {{ $pengaduan->status==='ditolak' ? 'selected' : '' }}>Ditolak</option>
                     </select>
+                    <div class="rounded-2xl border border-dashed border-gray-300 p-4 bg-gray-50">
+                        <label class="block text-xs font-semibold text-gray-600 mb-2">Bukti penyelesaian (wajib saat selesai)</label>
+                        <input type="file" name="bukti_file" accept="image/*,.pdf" class="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-violet-600 file:text-white file:text-sm file:font-semibold hover:file:bg-violet-700">
+                        <p class="text-[11px] text-gray-400 mt-2">Unggah foto atau file bukti tugas selesai. File akan tampil di detail laporan dan dikirim ke email pelapor.</p>
+                    </div>
                     <button type="submit" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold px-4 py-3 rounded-2xl transition">Update Status</button>
                 </div>
             </form>
