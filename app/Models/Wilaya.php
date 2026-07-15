@@ -26,6 +26,7 @@ class Wilaya extends Model
     public function parent()     { return $this->belongsTo(Wilaya::class, 'parent_id'); }
     public function children()   { return $this->hasMany(Wilaya::class, 'parent_id'); }
     public function pengaduans() { return $this->hasMany(Pengaduan::class, 'wilaya_id'); }
+    public function users()      { return $this->hasMany(User::class, 'wilaya_id'); }
 
     public function scopeAktif($q)     { return $q->where('is_active', true); }
     public function scopeKecamatan($q) { return $q->where('tipe', 'kecamatan'); }

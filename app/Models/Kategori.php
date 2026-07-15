@@ -23,7 +23,7 @@ class Kategori extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function getRouteKeyName(): string { return 'slug'; }
+    public function getRouteKeyName(): string { return 'id'; }
 
     public function pengaduans() { return $this->hasMany(Pengaduan::class, 'kategori_id'); }
 
