@@ -149,7 +149,7 @@
                 <div class="prop">PEMERINTAH KABUPATEN TANAH DATAR</div>
                 <div class="kabupaten">Kabupaten Tanah Datar</div>
                 <div class="unit">SISTEM INFORMASI PENGADUAN MASYARAKAT (SIPM) BATUSANGKARLAPOR</div>
-                <div class="alamat">Jl. Sultan Alam Bagagarsyah No. 4, Batusangkar 27213 &nbsp;&bull;&nbsp; Telp. (0752) 71038 &nbsp;&bull;&nbsp; batusangkarlapor.go.id</div>
+                <div class="alamat">Jl. Sultan Alam Bagagarsyah No. 4, Batusangkar 27213 &nbsp;&bull;&nbsp; Telp. (0752) 71038 &nbsp;&bull;&nbsp; batusangkarlapor.my.id</div>
             </td>
             <td class="kop-spacer-cell">&nbsp;</td>
         </tr>
@@ -319,7 +319,7 @@
     </table>
 
     <div class="verifikasi">
-        Dokumen ini dapat diverifikasi keasliannya melalui token pelacakan <span class="kode-verif">{{ $pengaduan->tracking_token }}</span> pada laman resmi batusangkarlapor.go.id
+        Dokumen ini dapat diverifikasi keasliannya melalui token pelacakan <span class="kode-verif">{{ $pengaduan->tracking_token }}</span> pada laman resmi batusangkarlapor.my.id
     </div>
 
     <div class="footer">
