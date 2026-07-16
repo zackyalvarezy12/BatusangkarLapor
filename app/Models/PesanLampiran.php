@@ -38,6 +38,9 @@ class PesanLampiran extends Model
 
     public function getUrlAttribute(): string
     {
-        return asset('storage/' . $this->path_file);
+        $path = trim((string) $this->path_file, '/');
+        $path = ltrim($path, 'storage/');
+
+        return asset('storage/' . $path);
     }
 }
