@@ -159,7 +159,8 @@
                 <form id="chatForm" enctype="multipart/form-data">
                     @csrf
                     <input type="file" id="fileInput" name="lampirans[]" multiple
-                           accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" class="hidden">
+                           accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" class="hidden"
+                           capture="environment">
                     <div class="flex items-end gap-3">
                         <button type="button" onclick="document.getElementById('fileInput').click()"
                                 class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0 transition">
@@ -301,7 +302,8 @@ document.getElementById('fileInput').addEventListener('change', function() {
     files.forEach(file => {
         const div = document.createElement('div');
         div.className = 'flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs';
-        if (file.type.startsWith('image/')) {
+        const isImageFile = file.type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|avif|heic|heif)$/i.test(file.name);
+        if (isImageFile) {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(file);
             img.className = 'w-8 h-8 rounded-lg object-cover flex-shrink-0';
