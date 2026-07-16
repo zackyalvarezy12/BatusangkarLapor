@@ -325,10 +325,29 @@ function clearFiles() {
     document.getElementById('previewList').innerHTML = '';
 }
 
+async function compressImage(file) {
+    if (!file.type.startsWith('image/')) return file;
+
+    const imageBitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    const maxWidth = 1280;
+    const scale = Math.min(1, maxWidth / Math.max(imageBitmap.width, imageBitmap.height));
+    canvas.width = Math.max(1, Math.round(imageBitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(imageBitmap.height * scale));
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+    if (!blob) return file;
+
+    return new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+}
+
 document.getElementById('chatForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const pesan = textarea.value.trim();
-    const files = document.getElementById('fileInput').files;
+    const files = Array.from(document.getElementById('fileInput').files);
     if (!pesan && !files.length) return;
 
     const btn = document.getElementById('sendBtn');
@@ -337,7 +356,11 @@ document.getElementById('chatForm').addEventListener('submit', async function(e)
     const fd = new FormData();
     fd.append('_token', CSRF);
     if (pesan) fd.append('pesan', pesan);
-    Array.from(files).forEach(f => fd.append('lampirans[]', f));
+
+    for (const file of files) {
+        const compressed = await compressImage(file);
+        fd.append('lampirans[]', compressed);
+    }
 
     try {
         const response = await fetch(PESAN_URL, {
