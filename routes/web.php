@@ -26,6 +26,15 @@ Route::get('/cek-laporan', [PublicController::class, 'lacak'])->name('lacak');
 Route::get('/faq',         [PublicController::class, 'faq'])->name('faq');
 Route::get('/kritik-saran',  [KritikController::class, 'create'])->name('kritik.create');
 Route::post('/kritik-saran', [KritikController::class, 'store'])->name('kritik.store');
+Route::get('/storage/{path}', function (string $path) {
+    $fullPath = storage_path('app/public/' . $path);
+
+    if (!file_exists($fullPath) || !is_file($fullPath)) {
+        abort(404);
+    }
+
+    return response()->file($fullPath);
+})->where('path', '.*');
 
 // ═══════════════════════════════════════════════
 // AUTH ROUTES (Guest Only)

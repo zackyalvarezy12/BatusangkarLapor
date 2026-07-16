@@ -156,11 +156,13 @@ class PengaduanController extends Controller
 
     public function kirimPesan(Request $request, Pengaduan $pengaduan)
     {
-        if ((int) $pengaduan->user_id !== (int) auth()->id()) abort(403);
+        if ((int) $pengaduan->user_id !== (int) auth()->id()) {
+            abort(403);
+        }
         $request->validate([
             'pesan'       => 'nullable|string|max:2000',
             'lampirans'   => 'nullable|array',
-            'lampirans.*' => 'file|max:10240',
+            'lampirans.*' => 'file|mimes:jpg,jpeg,png,pdf,heic,heif,webp,avif,gif|max:15360',
         ]);
         if (!$request->filled('pesan') && !$request->hasFile('lampirans')) {
             return back()->withErrors(['pesan' => 'Pesan atau lampiran wajib diisi.']);

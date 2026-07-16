@@ -211,7 +211,7 @@ class PengaduanController extends Controller
         $request->validate([
             'pesan'      => 'nullable|string|max:2000',
             'lampirans'  => 'nullable|array',
-            'lampirans.*'=> 'file|max:10240',
+            'lampirans.*'=> 'file|mimes:jpg,jpeg,png,pdf,heic,heif,webp,avif,gif|max:15360',
         ]);
 
         if (!$request->filled('pesan') && !$request->hasFile('lampirans')) {

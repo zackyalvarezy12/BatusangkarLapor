@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Kategori;
+use App\Models\Pengaduan;
 use App\Models\User;
 use App\Models\Wilaya;
 use Illuminate\Http\UploadedFile;
@@ -29,5 +30,25 @@ class MasyarakatPengaduanUploadTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
+    }
+
+    public function test_heic_camera_photo_is_accepted_for_chat_lampiran(): void
+    {
+        $this->withoutMiddleware();
+
+        $user = User::factory()->create();
+        $pengaduan = Pengaduan::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->post('/laporan/' . $pengaduan->slug . '/pesan', [
+            'pesan' => 'Foto dari kamera',
+            'lampirans' => [UploadedFile::fake()->create('photo.heic', 2048, 'image/heic')],
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('pesan_laporan', [
+            'pengaduan_id' => $pengaduan->id,
+            'user_id' => $user->id,
+        ]);
     }
 }
