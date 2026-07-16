@@ -126,9 +126,10 @@
                         </svg>
                     </div>
                     <p class="text-sm font-semibold text-gray-600">Klik untuk upload foto</p>
-                    <p class="text-xs text-gray-400 mt-1">PNG, JPG, PDF — Maks. 5MB per file</p>
+                    <p class="text-xs text-gray-400 mt-1">PNG, JPG, HEIC/HEIF, WEBP, PDF — Maks. 15MB per file</p>
                     <input type="file" id="fotoInput" name="lampiran[]" multiple
                            accept="image/*,.pdf" class="hidden"
+                           capture="environment"
                            onchange="previewFoto(this)">
                 </div>
                 <div id="fotoPreview" class="hidden mt-3 grid grid-cols-3 sm:grid-cols-5 gap-3"></div>

@@ -40,7 +40,7 @@ class PengaduanController extends Controller
             'wilayah_id'  => 'required|exists:wilayas,id',
             'deskripsi'   => 'required|string',
             'lampiran'    => 'nullable|array|max:5',
-            'lampiran.*'  => 'file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'lampiran.*'  => 'file|mimes:jpg,jpeg,png,pdf,heic,heif,webp,avif,gif|max:15360',
             'visibility'  => 'required|in:anonim,publik',
         ]);
 
