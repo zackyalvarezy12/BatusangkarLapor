@@ -19,7 +19,21 @@ class PesanLampiran extends Model
 
     public function isImage(): bool
     {
-        return str_starts_with($this->tipe_file, 'image/');
+        $mime = strtolower((string) $this->tipe_file);
+        if (str_starts_with($mime, 'image/')) {
+            return true;
+        }
+
+        $name = strtolower((string) ($this->nama_file ?? ''));
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'heic', 'heif'];
+
+        foreach ($imageExtensions as $ext) {
+            if (str_ends_with($name, '.' . $ext)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getUrlAttribute(): string
