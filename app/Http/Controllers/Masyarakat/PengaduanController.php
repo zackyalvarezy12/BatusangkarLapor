@@ -185,7 +185,28 @@ class PengaduanController extends Controller
                 ]);
             }
         }
-        if ($request->ajax()) return response()->json(['success' => true]);
+        if ($request->ajax() || $request->expectsJson()) {
+            $pesan->load('lampirans');
+            return response()->json([
+                'success' => true,
+                'pesan' => [
+                    'id' => $pesan->id,
+                    'pesan' => $pesan->pesan,
+                    'user_id' => $pesan->user_id,
+                    'user' => auth()->user()->name,
+                    'role' => auth()->user()->role,
+                    'avatar' => auth()->user()->avatar_url,
+                    'waktu' => $pesan->created_at->format('H:i'),
+                    'tanggal' => $pesan->created_at->format('d M Y'),
+                    'lampirans' => $pesan->lampirans->map(fn($l) => [
+                        'nama_file' => $l->nama_file,
+                        'url' => $l->url,
+                        'tipe_file' => $l->tipe_file,
+                        'is_image' => $l->isImage(),
+                    ]),
+                ],
+            ]);
+        }
         return back();
     }
 

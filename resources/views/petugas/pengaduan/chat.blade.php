@@ -371,11 +371,25 @@ document.getElementById('chatForm').addEventListener('submit', async function(e)
     Array.from(files).forEach(f => fd.append('lampirans[]', f));
 
     try {
-        await fetch(PESAN_URL, { method: 'POST', body: fd });
+        const response = await fetch(PESAN_URL, {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        let payload = null;
+        try { payload = await response.json(); } catch (e) {}
+
         textarea.value = '';
         textarea.style.height = 'auto';
         clearFiles();
-        await pollPesan();
+
+        if (payload?.success && payload?.pesan) {
+            renderPesan(payload.pesan);
+            lastId = payload.pesan.id;
+        } else {
+            await pollPesan();
+        }
     } catch(err) {
         console.error(err);
     } finally {

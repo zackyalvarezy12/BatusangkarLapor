@@ -39,13 +39,17 @@ class MasyarakatPengaduanUploadTest extends TestCase
         $user = User::factory()->create();
         $pengaduan = Pengaduan::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->post('/laporan/' . $pengaduan->slug . '/pesan', [
+        $response = $this->actingAs($user)->withHeaders([
+            'X-Requested-With' => 'XMLHttpRequest',
+            'Accept' => 'application/json',
+        ])->post(route('masyarakat.pengaduan.pesan', $pengaduan->slug), [
             'pesan' => 'Foto dari kamera',
             'lampirans' => [UploadedFile::fake()->create('photo.heic', 2048, 'image/heic')],
         ]);
 
-        $response->assertStatus(302);
-        $response->assertSessionHasNoErrors();
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonStructure(['success', 'pesan']);
         $this->assertDatabaseHas('pesan_laporan', [
             'pengaduan_id' => $pengaduan->id,
             'user_id' => $user->id,
